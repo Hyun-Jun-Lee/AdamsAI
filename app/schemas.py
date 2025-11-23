@@ -5,7 +5,7 @@ Provides type-safe data validation and serialization.
 
 from datetime import datetime
 from typing import Optional
-from pydantic import BaseModel, Field, field_validator
+from pydantic import BaseModel, Field, field_validator, ConfigDict
 
 
 # ============================================================================
@@ -36,8 +36,7 @@ class VideoResponse(VideoBase):
     created_at: datetime
     status: str
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class VideoDownloadRequest(BaseModel):
@@ -82,8 +81,7 @@ class AudioResponse(AudioBase):
     created_at: datetime
     status: str
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class AudioExtractRequest(BaseModel):
@@ -114,8 +112,7 @@ class TranscriptResponse(TranscriptBase):
     model: str
     created_at: datetime
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class TranscriptCreateRequest(BaseModel):
@@ -134,6 +131,44 @@ class TranscriptCreateRequest(BaseModel):
 
 
 # ============================================================================
+# PromptTemplate Schemas
+# ============================================================================
+
+class PromptTemplateBase(BaseModel):
+    """Base schema for prompt template with common fields."""
+    name: str
+    content: str
+
+
+class PromptTemplateCreate(PromptTemplateBase):
+    """Schema for creating a new prompt template."""
+    description: Optional[str] = None
+    is_active: bool = True
+    category: str = "general"
+
+
+class PromptTemplateUpdate(BaseModel):
+    """Schema for updating a prompt template."""
+    name: Optional[str] = None
+    description: Optional[str] = None
+    content: Optional[str] = None
+    is_active: Optional[bool] = None
+    category: Optional[str] = None
+
+
+class PromptTemplateResponse(PromptTemplateBase):
+    """Schema for prompt template response with all fields."""
+    id: int
+    description: Optional[str]
+    is_active: bool
+    category: str
+    created_at: datetime
+    updated_at: datetime
+
+    model_config = ConfigDict(from_attributes=True)
+
+
+# ============================================================================
 # Summary Schemas
 # ============================================================================
 
@@ -145,42 +180,45 @@ class SummaryBase(BaseModel):
 
 class SummaryCreate(SummaryBase):
     """Schema for creating a new summary record."""
-    model_name: str
-    prompt_template: Optional[str] = None
+    ai_model_name: str
+    prompt_template_id: Optional[int] = None
+
+
+class SummaryUpdate(BaseModel):
+    """Schema for updating a summary."""
+    summary_text: Optional[str] = None
+    ai_model_name: Optional[str] = None
+    prompt_template_id: Optional[int] = None
 
 
 class SummaryResponse(SummaryBase):
     """Schema for summary response with all fields."""
     id: int
-    model_name: str
-    prompt_template: Optional[str] = None
+    ai_model_name: str
+    prompt_template_id: Optional[int]
     created_at: datetime
+    updated_at: datetime
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True, protected_namespaces=())
 
 
 class SummaryCreateRequest(BaseModel):
     """Schema for summary creation request."""
     transcript_id: int = Field(..., gt=0, description="Transcript ID to summarize")
-    model_name: Optional[str] = Field(
+    ai_model_name: Optional[str] = Field(
         default=None,
         description="LLM model to use (e.g., 'anthropic/claude-3.5-sonnet')"
     )
-    prompt_template: str = Field(
-        default="default",
-        description="Prompt template to use (default, detailed, brief)"
+    prompt_template_id: Optional[int] = Field(
+        default=None,
+        description="Prompt template ID to use (if None, uses default template)"
+    )
+    prompt_template_name: Optional[str] = Field(
+        default=None,
+        description="Prompt template name to use (alternative to ID, e.g., 'default', 'detailed')"
     )
 
-    @field_validator("prompt_template")
-    @classmethod
-    def validate_template(cls, v: str) -> str:
-        """Validate prompt template name."""
-        v = v.lower().strip()
-        valid_templates = ["default", "detailed", "brief"]
-        if v not in valid_templates:
-            raise ValueError(f"Template must be one of: {', '.join(valid_templates)}")
-        return v
+    model_config = ConfigDict(protected_namespaces=())
 
 
 # ============================================================================
@@ -192,5 +230,4 @@ class PaginatedResponse(BaseModel):
     total: int
     items: list
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)

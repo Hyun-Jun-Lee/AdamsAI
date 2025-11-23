@@ -104,7 +104,7 @@ def init_db() -> None:
     Initialize database by creating all tables.
     Should be called once at application startup.
     """
-    from app.models import Video, Audio, Transcript, Summary  # Import here to avoid circular dependency
+    from app.models import Video, Audio, Transcript, Summary, PromptTemplate  # Import here to avoid circular dependency
 
     engine = get_engine()
     Base.metadata.create_all(bind=engine)

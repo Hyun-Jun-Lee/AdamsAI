@@ -6,7 +6,7 @@ Uses pydantic-settings for environment variable management.
 from pathlib import Path
 from typing import Optional
 from pydantic_settings import BaseSettings
-
+from pydantic import ConfigDict
 
 class Settings(BaseSettings):
     """Application configuration settings loaded from environment variables."""
@@ -41,11 +41,10 @@ class Settings(BaseSettings):
     default_user_agent: str = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36"
     download_threads: int = 8
 
-    class Config:
-        env_file = ".env"
-        env_file_encoding = "utf-8"
-
-
+    model_config = ConfigDict(
+        env_file=".env",
+        env_file_encoding="utf-8"
+    )
 # Global settings instance
 _settings: Optional[Settings] = None
 
