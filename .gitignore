@@ -177,3 +177,8 @@ pyrightconfig.json
 # End of https://www.toptal.com/developers/gitignore/api/python
 .claude/
 .coverage
+
+# Frontend
+frontend/node_modules/
+frontend/.DS_Store
+.DS_Store
