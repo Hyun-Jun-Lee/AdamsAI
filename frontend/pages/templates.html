@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>AdamsAI - Prompt Templates</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&amp;family=Fira+Code:wght@400;500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,0" rel="stylesheet"/>
+<style>
+      .material-symbols-outlined {
+        font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 20;
+      }
+      .font-code {
+        font-family: 'Fira Code', monospace;
+      }
+    </style>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "primary": "#3c83f6",
+              "background-light": "#f5f7f8",
+              "background-dark": "#101722",
+            },
+            fontFamily: {
+              "display": ["Inter", "sans-serif"],
+              "code": ["Fira Code", "monospace"],
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+</head>
+<body class="font-display bg-background-light dark:bg-background-dark text-gray-800 dark:text-gray-200">
+<div class="relative flex h-auto min-h-screen w-full flex-col group/design-root overflow-x-hidden">
+<div class="layout-container flex h-full grow flex-col">
+<header class="flex items-center justify-between whitespace-nowrap border-b border-gray-200 dark:border-gray-800 px-6 md:px-10 py-3 bg-white dark:bg-background-dark/50 backdrop-blur-sm sticky top-0 z-10">
+<div class="flex items-center gap-4 text-gray-900 dark:text-white">
+<div class="size-6 text-primary">
+<svg fill="none" viewbox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+<path clip-rule="evenodd" d="M24 4H42V17.3333V30.6667H24V44H6V30.6667V17.3333H24V4Z" fill="currentColor" fill-rule="evenodd"></path>
+</svg>
+</div>
+<h2 class="text-lg font-bold leading-tight tracking-[-0.015em]">AdamsAI</h2>
+</div>
+<div class="hidden md:flex items-center gap-9">
+<a class="text-sm font-medium leading-normal text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white" href="#">Dashboard</a>
+<a class="text-sm font-medium leading-normal text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white" href="#">History</a>
+<a class="text-sm font-bold leading-normal text-primary" href="#">Templates</a>
+<a class="text-sm font-medium leading-normal text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white" href="#">Settings</a>
+</div>
+<div class="flex flex-1 justify-end items-center gap-3">
+<button class="flex max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg size-10 bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700">
+<span class="material-symbols-outlined text-xl">notifications</span>
+</button>
+<div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10" data-alt="User avatar image" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBgkLdXpWbxBqdbArwLWl7ZDbc6oJn1v_bMcr8OI4lBstxygDKyKO6TjWMhZLCKhWjHTDM7QtRXo46sH3SQ73yRiItc0eRVP_0QyRQMe4vujaaiBe2QthX_mg3DiBZDfI6KwBzbJxypP6IwcPri1pk6EoIibN6OqBKTDMLDMb0JZneW4IMPTJA4KHo2jclkHJOeEnFKO6HUj1XYbF12fK46G12zcOePbwI9f3XVGFbBfO_gKlwwmqbuAufVoBrGMYqwKN809i_cpdE");'></div>
+</div>
+</header>
+<main class="px-4 sm:px-6 lg:px-10 flex flex-1 justify-center py-8">
+<div class="layout-content-container flex flex-col w-full max-w-7xl flex-1">
+<div class="flex flex-wrap justify-between items-center gap-4 mb-6">
+<h1 class="text-gray-900 dark:text-white text-3xl sm:text-4xl font-black leading-tight tracking-[-0.033em]">Prompt Templates</h1>
+<button class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-4 bg-primary text-white text-sm font-bold leading-normal tracking-[0.015em] gap-2 hover:bg-primary/90 transition-colors">
+<span class="material-symbols-outlined text-lg">add_circle</span>
+<span class="truncate">Create Template</span>
+</button>
+</div>
+<div class="flex gap-2 p-1 flex-wrap mb-6 border-b border-gray-200 dark:border-gray-800">
+<button class="flex h-9 shrink-0 items-center justify-center gap-x-2 rounded-md px-3 bg-primary/10 text-primary">
+<p class="text-sm font-semibold leading-normal">All</p>
+</button>
+<button class="flex h-9 shrink-0 items-center justify-center gap-x-2 rounded-md px-3 hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-600 dark:text-gray-400">
+<p class="text-sm font-medium leading-normal">Active</p>
+</button>
+<button class="flex h-9 shrink-0 items-center justify-center gap-x-2 rounded-md px-3 hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-600 dark:text-gray-400">
+<p class="text-sm font-medium leading-normal">Inactive</p>
+</button>
+<button class="flex h-9 shrink-0 items-center justify-center gap-x-2 rounded-md pl-3 pr-2 hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-600 dark:text-gray-400">
+<p class="text-sm font-medium leading-normal">Category: All</p>
+<span class="material-symbols-outlined text-lg">expand_more</span>
+</button>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+<div class="flex flex-col rounded-xl border-2 border-primary bg-white dark:bg-gray-900/50 shadow-sm transition-shadow hover:shadow-lg">
+<div class="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-800">
+<p class="text-gray-900 dark:text-white text-base font-bold leading-normal truncate pr-4">Concise Meeting Summary</p>
+<div class="flex items-center gap-2">
+<span class="text-xs font-medium text-gray-500 dark:text-gray-400">Active</span>
+<button class="relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent bg-primary transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 dark:focus:ring-offset-background-dark">
+<span class="inline-block h-5 w-5 translate-x-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out"></span>
+</button>
+</div>
+</div>
+<div class="p-4 flex flex-col gap-4 grow">
+<span class="text-xs font-semibold uppercase tracking-wider text-green-700 dark:text-green-400 bg-green-100 dark:bg-green-900/50 px-2 py-1 rounded-full self-start">Meeting Notes</span>
+<p class="text-gray-600 dark:text-gray-400 text-sm font-normal leading-normal line-clamp-2">A template to generate concise summaries from meeting transcripts, focusing on key decisions and action items.</p>
+<div class="bg-gray-100 dark:bg-gray-800/80 rounded-lg p-3 text-sm font-code text-gray-700 dark:text-gray-300 overflow-hidden">
+<p class="truncate">Summarize the key decisions from the transcript: <span class="text-primary font-semibold">{transcript}</span></p>
+</div>
+</div>
+<div class="flex items-center justify-between p-4 mt-auto border-t border-gray-200 dark:border-gray-800">
+<div class="flex items-center gap-1 text-gray-500 dark:text-gray-400">
+<span class="material-symbols-outlined text-base">bar_chart</span>
+<p class="text-sm font-medium leading-normal">Used 42 times</p>
+</div>
+<div class="flex items-center gap-2">
+<button class="flex size-8 items-center justify-center rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-500 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 transition-colors">
+<span class="material-symbols-outlined text-lg">edit</span>
+</button>
+<button class="flex size-8 items-center justify-center rounded-lg hover:bg-red-50 dark:hover:bg-red-900/30 text-gray-500 dark:text-gray-400 hover:text-red-600 dark:hover:text-red-500 transition-colors">
+<span class="material-symbols-outlined text-lg">delete</span>
+</button>
+</div>
+</div>
+</div>
+<div class="flex flex-col rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900/50 shadow-sm transition-shadow hover:shadow-lg">
+<div class="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-800">
+<p class="text-gray-900 dark:text-white text-base font-bold leading-normal truncate pr-4">Key Interview Takeaways</p>
+<div class="flex items-center gap-2">
+<span class="text-xs font-medium text-gray-500 dark:text-gray-400">Inactive</span>
+<button class="relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent bg-gray-200 dark:bg-gray-700 transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 dark:focus:ring-offset-background-dark">
+<span class="inline-block h-5 w-5 translate-x-0 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out"></span>
+</button>
+</div>
+</div>
+<div class="p-4 flex flex-col gap-4 grow">
+<span class="text-xs font-semibold uppercase tracking-wider text-orange-700 dark:text-orange-400 bg-orange-100 dark:bg-orange-900/50 px-2 py-1 rounded-full self-start">Interview</span>
+<p class="text-gray-600 dark:text-gray-400 text-sm font-normal leading-normal line-clamp-2">This template helps extract crucial insights and candidate qualifications from interview transcripts.</p>
+<div class="bg-gray-100 dark:bg-gray-800/80 rounded-lg p-3 text-sm font-code text-gray-700 dark:text-gray-300 overflow-hidden">
+<p class="truncate">Extract qualifications from: <span class="text-primary font-semibold">{transcript}</span>...</p>
+</div>
+</div>
+<div class="flex items-center justify-between p-4 mt-auto border-t border-gray-200 dark:border-gray-800">
+<div class="flex items-center gap-1 text-gray-500 dark:text-gray-400">
+<span class="material-symbols-outlined text-base">bar_chart</span>
+<p class="text-sm font-medium leading-normal">Used 18 times</p>
+</div>
+<div class="flex items-center gap-2">
+<button class="flex size-8 items-center justify-center rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-500 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 transition-colors">
+<span class="material-symbols-outlined text-lg">edit</span>
+</button>
+<button class="flex size-8 items-center justify-center rounded-lg hover:bg-red-50 dark:hover:bg-red-900/30 text-gray-500 dark:text-gray-400 hover:text-red-600 dark:hover:text-red-500 transition-colors">
+<span class="material-symbols-outlined text-lg">delete</span>
+</button>
+</div>
+</div>
+</div>
+<div class="flex flex-col rounded-xl border-2 border-primary bg-white dark:bg-gray-900/50 shadow-sm transition-shadow hover:shadow-lg">
+<div class="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-800">
+<p class="text-gray-900 dark:text-white text-base font-bold leading-normal truncate pr-4">Lecture Key Points</p>
+<div class="flex items-center gap-2">
+<span class="text-xs font-medium text-gray-500 dark:text-gray-400">Active</span>
+<button class="relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent bg-primary transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 dark:focus:ring-offset-background-dark">
+<span class="inline-block h-5 w-5 translate-x-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out"></span>
+</button>
+</div>
+</div>
+<div class="p-4 flex flex-col gap-4 grow">
+<span class="text-xs font-semibold uppercase tracking-wider text-purple-700 dark:text-purple-400 bg-purple-100 dark:bg-purple-900/50 px-2 py-1 rounded-full self-start">Lecture</span>
+<p class="text-gray-600 dark:text-gray-400 text-sm font-normal leading-normal line-clamp-2">Designed to summarize the main arguments and concepts from educational lectures or presentations.</p>
+<div class="bg-gray-100 dark:bg-gray-800/80 rounded-lg p-3 text-sm font-code text-gray-700 dark:text-gray-300 overflow-hidden">
+<p class="truncate">What are the main arguments in: <span class="text-primary font-semibold">{transcript}</span>?</p>
+</div>
+</div>
+<div class="flex items-center justify-between p-4 mt-auto border-t border-gray-200 dark:border-gray-800">
+<div class="flex items-center gap-1 text-gray-500 dark:text-gray-400">
+<span class="material-symbols-outlined text-base">bar_chart</span>
+<p class="text-sm font-medium leading-normal">Used 115 times</p>
+</div>
+<div class="flex items-center gap-2">
+<button class="flex size-8 items-center justify-center rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-500 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 transition-colors">
+<span class="material-symbols-outlined text-lg">edit</span>
+</button>
+<button class="flex size-8 items-center justify-center rounded-lg hover:bg-red-50 dark:hover:bg-red-900/30 text-gray-500 dark:text-gray-400 hover:text-red-600 dark:hover:text-red-500 transition-colors">
+<span class="material-symbols-outlined text-lg">delete</span>
+</button>
+</div>
+</div>
+</div>
+<div class="flex flex-col rounded-xl border-2 border-primary bg-white dark:bg-gray-900/50 shadow-sm transition-shadow hover:shadow-lg">
+<div class="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-800">
+<p class="text-gray-900 dark:text-white text-base font-bold leading-normal truncate pr-4">Product Feedback Analysis</p>
+<div class="flex items-center gap-2">
+<span class="text-xs font-medium text-gray-500 dark:text-gray-400">Active</span>
+<button class="relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent bg-primary transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 dark:focus:ring-offset-background-dark">
+<span class="inline-block h-5 w-5 translate-x-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out"></span>
+</button>
+</div>
+</div>
+<div class="p-4 flex flex-col gap-4 grow">
+<span class="text-xs font-semibold uppercase tracking-wider text-blue-700 dark:text-blue-400 bg-blue-100 dark:bg-blue-900/50 px-2 py-1 rounded-full self-start">Custom</span>
+<p class="text-gray-600 dark:text-gray-400 text-sm font-normal leading-normal line-clamp-2">Categorize user feedback into themes like 'UI/UX', 'Bugs', and 'Feature Requests' from a call.</p>
+<div class="bg-gray-100 dark:bg-gray-800/80 rounded-lg p-3 text-sm font-code text-gray-700 dark:text-gray-300 overflow-hidden">
+<p class="truncate">Analyze feedback themes from: <span class="text-primary font-semibold">{transcript}</span></p>
+</div>
+</div>
+<div class="flex items-center justify-between p-4 mt-auto border-t border-gray-200 dark:border-gray-800">
+<div class="flex items-center gap-1 text-gray-500 dark:text-gray-400">
+<span class="material-symbols-outlined text-base">bar_chart</span>
+<p class="text-sm font-medium leading-normal">Used 23 times</p>
+</div>
+<div class="flex items-center gap-2">
+<button class="flex size-8 items-center justify-center rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-500 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 transition-colors">
+<span class="material-symbols-outlined text-lg">edit</span>
+</button>
+<button class="flex size-8 items-center justify-center rounded-lg hover:bg-red-50 dark:hover:bg-red-900/30 text-gray-500 dark:text-gray-400 hover:text-red-600 dark:hover:text-red-500 transition-colors">
+<span class="material-symbols-outlined text-lg">delete</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+<div class="flex items-center justify-center p-4 mt-8">
+<a class="flex size-10 items-center justify-center text-gray-500 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200" href="#">
+<span class="material-symbols-outlined text-xl">chevron_left</span>
+</a>
+<a class="text-sm font-bold leading-normal tracking-[0.015em] flex size-10 items-center justify-center text-white bg-primary rounded-full" href="#">1</a>
+<a class="text-sm font-normal leading-normal flex size-10 items-center justify-center text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full" href="#">2</a>
+<a class="text-sm font-normal leading-normal flex size-10 items-center justify-center text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full" href="#">3</a>
+<span class="text-sm font-normal leading-normal flex size-10 items-center justify-center text-gray-600 dark:text-gray-400 rounded-full">...</span>
+<a class="text-sm font-normal leading-normal flex size-10 items-center justify-center text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full" href="#">8</a>
+<a class="flex size-10 items-center justify-center text-gray-500 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200" href="#">
+<span class="material-symbols-outlined text-xl">chevron_right</span>
+</a>
+</div>
+</div>
+</main>
+</div>
+</div>
+</body></html>

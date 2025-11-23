@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>AdamsAI - Unified Workflow</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<script>
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "primary": "#3c83f6",
+            "background-light": "#f5f7f8",
+            "background-dark": "#101722",
+          },
+          fontFamily: {
+            "display": ["Inter", "sans-serif"]
+          },
+          borderRadius: {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+        },
+      },
+    }
+  </script>
+<style>
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      vertical-align: middle;
+    }
+  </style>
+</head>
+<body class="font-display bg-background-light dark:bg-background-dark">
+<script type="module" src="/js/workflow.js"></script>
+<div class="relative flex min-h-screen w-full flex-col group/design-root overflow-x-hidden">
+<div class="layout-container flex h-full grow flex-col">
+<header class="flex items-center justify-between whitespace-nowrap border-b border-solid border-slate-200 dark:border-slate-800 px-10 py-3 bg-white dark:bg-background-dark/50">
+<div class="flex items-center gap-4 text-slate-800 dark:text-slate-200">
+<div class="size-6 text-primary">
+<svg fill="none" viewbox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+<path clip-rule="evenodd" d="M24 4H42V17.3333V30.6667H24V44H6V30.6667V17.3333H24V4Z" fill="currentColor" fill-rule="evenodd"></path>
+</svg>
+</div>
+<h2 class="text-slate-800 dark:text-slate-200 text-lg font-bold leading-tight tracking-[-0.015em]">AdamsAI</h2>
+</div>
+<div class="flex flex-1 justify-end gap-4">
+<button class="flex max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200 gap-2 text-sm font-bold leading-normal tracking-[0.015em] min-w-0 px-2.5">
+<span class="material-symbols-outlined text-slate-600 dark:text-slate-400">chat_bubble</span>
+</button>
+<button class="flex max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200 gap-2 text-sm font-bold leading-normal tracking-[0.015em] min-w-0 px-2.5">
+<span class="material-symbols-outlined text-slate-600 dark:text-slate-400">settings</span>
+</button>
+<div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10" data-alt="User avatar placeholder image" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuAzzRDTgNhOrDzhR3pOwmK8NES2R5ZjqgNXkQkNy8SKhN2SIVNL-_fm30i_jxgtvoXSt0JRIGS0KWckpqfMFOVztpRc6SGdfIJbjrthFjl6-fp62ta4p1AWdIpkm2ZmajpzmfF645ocF71D3HzewMAqizrIGGd5s83qOpvIkjW2UhdN1mDsbxPF5C9r3Nk-IYntRISeNmo88I4z_dN3TcZp7H0RzuB1JFBl-VBXXx0R3Yi28ta6sOCMnUqx93abiTrRR9sWFjK1ahk");'></div>
+</div>
+</header>
+<main class="flex flex-1 justify-center py-8 px-4">
+<div class="layout-content-container flex flex-col w-full max-w-[1200px] flex-1">
+<div class="flex flex-wrap justify-between gap-4 p-4">
+<div class="flex min-w-72 flex-col gap-2">
+<p class="text-slate-800 dark:text-slate-100 text-4xl font-black leading-tight tracking-[-0.033em]">Unified Workflow</p>
+<p class="text-slate-500 dark:text-slate-400 text-base font-normal leading-normal">Upload video and get AI summary automatically.</p>
+</div>
+</div>
+<div class="px-4 py-6">
+<div class="flex items-center">
+<div class="flex flex-col items-center relative">
+<div class="flex size-8 shrink-0 items-center justify-center gap-x-2 rounded-full bg-primary text-white">
+<span class="material-symbols-outlined text-lg" style="font-variation-settings: 'FILL' 1;">movie</span>
+</div>
+<p class="text-slate-700 dark:text-slate-300 text-sm font-medium leading-normal mt-2">1. Video</p>
+</div>
+<div class="flex-auto border-t-2 border-primary mx-4"></div>
+<div class="flex flex-col items-center relative">
+<div class="flex size-8 shrink-0 items-center justify-center gap-x-2 rounded-full bg-slate-200 dark:bg-slate-700 text-slate-500 dark:text-slate-400">
+<span class="material-symbols-outlined text-lg">graphic_eq</span>
+</div>
+<p class="text-slate-500 dark:text-slate-400 text-sm font-medium leading-normal mt-2">2. Audio</p>
+</div>
+<div class="flex-auto border-t-2 border-slate-200 dark:border-slate-700 mx-4"></div>
+<div class="flex flex-col items-center relative">
+<div class="flex size-8 shrink-0 items-center justify-center gap-x-2 rounded-full bg-slate-200 dark:bg-slate-700 text-slate-500 dark:text-slate-400">
+<span class="material-symbols-outlined text-lg">subtitles</span>
+</div>
+<p class="text-slate-500 dark:text-slate-400 text-sm font-medium leading-normal mt-2">3. Transcript</p>
+</div>
+<div class="flex-auto border-t-2 border-slate-200 dark:border-slate-700 mx-4"></div>
+<div class="flex flex-col items-center relative">
+<div class="flex size-8 shrink-0 items-center justify-center gap-x-2 rounded-full bg-slate-200 dark:bg-slate-700 text-slate-500 dark:text-slate-400">
+<span class="material-symbols-outlined text-lg">summarize</span>
+</div>
+<p class="text-slate-500 dark:text-slate-400 text-sm font-medium leading-normal mt-2">4. Summary</p>
+</div>
+</div>
+</div>
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-8 p-4 mt-4">
+<div class="lg:col-span-2 bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 p-6">
+<div class="flex flex-col gap-6">
+<div class="flex w-full">
+<div class="flex h-10 w-full items-center justify-center rounded-lg bg-slate-100 dark:bg-slate-800 p-1">
+<label class="flex cursor-pointer h-full grow items-center justify-center overflow-hidden rounded-lg px-2 has-[:checked]:bg-white has-[:checked]:dark:bg-slate-700 has-[:checked]:shadow-[0_1px_3px_rgba(0,0,0,0.1)] has-[:checked]:text-slate-800 has-[:checked]:dark:text-slate-100 text-slate-500 dark:text-slate-400 text-sm font-medium leading-normal">
+<span class="truncate">File Upload</span>
+<input checked="" class="invisible w-0" name="upload-type" type="radio" value="File Upload"/>
+</label>
+<label class="flex cursor-pointer h-full grow items-center justify-center overflow-hidden rounded-lg px-2 has-[:checked]:bg-white has-[:checked]:dark:bg-slate-700 has-[:checked]:shadow-[0_1px_3px_rgba(0,0,0,0.1)] has-[:checked]:text-slate-800 has-[:checked]:dark:text-slate-100 text-slate-500 dark:text-slate-400 text-sm font-medium leading-normal">
+<span class="truncate">URL</span>
+<input class="invisible w-0" name="upload-type" type="radio" value="URL"/>
+</label>
+</div>
+</div>
+<div class="flex flex-col p-4">
+<div class="flex flex-col items-center gap-6 rounded-xl border-2 border-dashed border-slate-300 dark:border-slate-700 px-6 py-14">
+<div class="flex size-14 items-center justify-center rounded-full bg-slate-100 dark:bg-slate-800">
+<span class="material-symbols-outlined text-3xl text-slate-500 dark:text-slate-400">upload_file</span>
+</div>
+<div class="flex max-w-[480px] flex-col items-center gap-2">
+<p class="text-slate-800 dark:text-slate-100 text-lg font-bold leading-tight tracking-[-0.015em] max-w-[480px] text-center">Drag &amp; Drop Your Video Here</p>
+<p class="text-slate-600 dark:text-slate-400 text-sm font-normal leading-normal max-w-[480px] text-center">or browse files on your computer</p>
+</div>
+<button class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-4 bg-slate-200 dark:bg-slate-700 text-slate-800 dark:text-slate-200 text-sm font-bold leading-normal tracking-[0.015em] hover:bg-slate-300 dark:hover:bg-slate-600">
+<span class="truncate">Browse Files</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+<div class="lg:col-span-1 bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 p-6">
+<div class="flex flex-col space-y-6">
+<h3 class="text-lg font-bold text-slate-800 dark:text-slate-100 border-b border-slate-200 dark:border-slate-800 pb-3">Settings</h3>
+<div class="flex flex-col space-y-2">
+<label class="text-sm font-medium text-slate-600 dark:text-slate-400">Transcription Language</label>
+<select class="w-full rounded-lg border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 focus:border-primary focus:ring-primary">
+<option>Auto-detect</option>
+<option>English</option>
+<option>Spanish</option>
+<option>French</option>
+</select>
+</div>
+<div class="flex flex-col space-y-2">
+<label class="text-sm font-medium text-slate-600 dark:text-slate-400">AI Model</label>
+<select class="w-full rounded-lg border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 focus:border-primary focus:ring-primary">
+<option>AdamsAI v3 (Recommended)</option>
+<option>AdamsAI v2</option>
+<option>General Purpose Model</option>
+</select>
+</div>
+<div class="flex flex-col space-y-2">
+<label class="flex items-center justify-between text-sm font-medium text-slate-600 dark:text-slate-400">
+<span>Prompt Template</span>
+<button class="text-slate-500 hover:text-primary dark:text-slate-400 dark:hover:text-primary">
+<span class="material-symbols-outlined text-base">visibility</span>
+</button>
+</label>
+<select class="w-full rounded-lg border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 focus:border-primary focus:ring-primary">
+<option>Default Summary</option>
+<option>Bullet Points</option>
+<option>Key Takeaways</option>
+</select>
+</div>
+<div>
+<details class="group">
+<summary class="flex cursor-pointer items-center justify-between list-none text-sm font-medium text-slate-600 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200">
+                      Advanced Settings
+                      <span class="material-symbols-outlined transition-transform group-open:rotate-180">expand_more</span>
+</summary>
+<div class="mt-4 space-y-4 border-t border-slate-200 dark:border-slate-700 pt-4">
+<p class="text-sm text-slate-500 dark:text-slate-400">Advanced options will be available here.</p>
+</div>
+</details>
+</div>
+</div>
+</div>
+</div>
+<div class="flex justify-end gap-4 p-4 mt-4">
+<button class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-12 px-6 bg-slate-200 dark:bg-slate-700 text-slate-800 dark:text-slate-200 text-base font-bold leading-normal hover:bg-slate-300 dark:hover:bg-slate-600">
+<span class="truncate">Cancel</span>
+</button>
+<button class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-12 px-8 bg-primary text-white text-base font-bold leading-normal hover:bg-blue-600 dark:hover:bg-blue-500 shadow-sm">
+<span class="truncate">Start Processing</span>
+</button>
+</div>
+</div>
+</main>
+</div>
+</div>
+</body></html>

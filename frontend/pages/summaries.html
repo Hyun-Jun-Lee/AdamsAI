@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>AdamsAI - Summaries</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,0" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings:
+            'FILL' 0,
+            'wght' 400,
+            'GRAD' 0,
+            'opsz' 24
+        }
+    </style>
+<script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#3c83f6",
+                        "background-light": "#f5f7f8",
+                        "background-dark": "#101722",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+</head>
+<body class="font-display bg-background-light dark:bg-background-dark text-gray-800 dark:text-gray-200">
+<script type="module" src="/js/summaries.js"></script>
+<div class="relative flex min-h-screen w-full flex-col group/design-root">
+<div class="flex flex-1">
+<!-- SideNavBar -->
+<aside class="flex flex-col w-64 bg-white dark:bg-background-dark dark:border-r dark:border-gray-800 p-4">
+<div class="flex flex-col gap-4">
+<div class="flex gap-3 items-center">
+<div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10" data-alt="AdamsAI company logo" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDmr8ePY_xCoTZ8xAOwQfgwZN6BUlYhkOgvETE9uUmnB9G02F0cNOAoqf32-e5bmHLrr95M6VMpYk1HKOkAhO1-fbtocMzuKlot9VWtRt7w9tioEKj7gL2rRnS-8d3LImvDTlh33NMjVG42J_pzl_OV2Bt75_LTCGQuJ33yp8pkzVucBGX0pTGFgOngzDp9EMn85M2Aqyt_V6yeQKKpVtS2qG4orT1efPg9eECAAALHXWGESoXYSFwpl7I5F5A2a0TPn5tGIzYijdM");'></div>
+<div class="flex flex-col">
+<h1 class="text-gray-900 dark:text-white text-base font-medium leading-normal">AdamsAI</h1>
+<p class="text-gray-500 dark:text-gray-400 text-sm font-normal leading-normal">Workspace</p>
+</div>
+</div>
+<nav class="flex flex-col gap-2 mt-4">
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg bg-primary/10 text-primary dark:bg-primary/20" href="#">
+<span class="material-symbols-outlined text-primary">description</span>
+<p class="text-sm font-medium leading-normal">Summaries</p>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800" href="#">
+<span class="material-symbols-outlined">playlist_play</span>
+<p class="text-sm font-medium leading-normal">Transcripts</p>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<p class="text-sm font-medium leading-normal">Templates</p>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800" href="#">
+<span class="material-symbols-outlined">pie_chart</span>
+<p class="text-sm font-medium leading-normal">Usage</p>
+</a>
+</nav>
+</div>
+<div class="mt-auto flex flex-col gap-1">
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800" href="#">
+<span class="material-symbols-outlined">settings</span>
+<p class="text-sm font-medium leading-normal">Settings</p>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800" href="#">
+<span class="material-symbols-outlined">help_center</span>
+<p class="text-sm font-medium leading-normal">Help Center</p>
+</a>
+</div>
+</aside>
+<!-- Main Content -->
+<main class="flex-1 p-6 lg:p-8">
+<div class="w-full max-w-7xl mx-auto">
+<!-- PageHeading -->
+<div class="flex flex-wrap justify-between items-center gap-4 mb-6">
+<h1 class="text-gray-900 dark:text-white text-4xl font-black leading-tight tracking-[-0.033em]">Summaries</h1>
+<button class="flex items-center justify-center gap-2 min-w-[84px] cursor-pointer rounded-lg h-10 px-4 bg-primary text-white text-sm font-bold leading-normal tracking-[0.015em] hover:bg-primary/90 transition-colors">
+<span class="material-symbols-outlined text-base">add_circle</span>
+<span class="truncate">Generate Summary</span>
+</button>
+</div>
+<!-- ToolBar / Filter Bar -->
+<div class="flex flex-wrap gap-2 items-center mb-6 p-3 bg-white dark:bg-gray-900/50 rounded-lg border border-gray-200 dark:border-gray-800">
+<div class="relative flex-grow min-w-[200px]">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">search</span>
+<input class="w-full pl-10 pr-4 py-2 rounded-md border-gray-300 dark:border-gray-700 bg-transparent focus:ring-primary focus:border-primary dark:text-white" placeholder="Search summaries..." type="text"/>
+</div>
+<div class="relative">
+<select class="appearance-none cursor-pointer pl-4 pr-10 py-2 rounded-md border-gray-300 dark:border-gray-700 bg-transparent focus:ring-primary focus:border-primary dark:text-white">
+<option>All Models</option>
+<option>GPT-4</option>
+<option>Claude 3</option>
+<option>Llama 3</option>
+</select>
+<span class="material-symbols-outlined pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-gray-400">expand_more</span>
+</div>
+<button class="flex items-center gap-2 px-4 py-2 rounded-md border border-gray-300 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800">
+<span class="material-symbols-outlined text-lg">calendar_today</span>
+<span>Date Range</span>
+</button>
+<div class="relative">
+<select class="appearance-none cursor-pointer pl-4 pr-10 py-2 rounded-md border-gray-300 dark:border-gray-700 bg-transparent focus:ring-primary focus:border-primary dark:text-white">
+<option>Sort: Newest</option>
+<option>Sort: Oldest</option>
+<option>Sort: Model</option>
+</select>
+<span class="material-symbols-outlined pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-gray-400">swap_vert</span>
+</div>
+</div>
+<!-- ImageGrid adapted as SummaryCard Grid -->
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+<!-- Card 1 -->
+<div class="flex flex-col gap-4 p-5 bg-white dark:bg-gray-900/50 rounded-xl border border-gray-200 dark:border-gray-800">
+<div class="flex justify-between items-start">
+<a class="text-lg font-bold text-gray-900 dark:text-white hover:text-primary dark:hover:text-primary/90 transition-colors" href="#">AI Conference Keynote 2024</a>
+<span class="text-xs text-gray-500 dark:text-gray-400 whitespace-nowrap">3 hours ago</span>
+</div>
+<div>
+<span class="inline-flex items-center gap-1.5 bg-green-100 dark:bg-green-900/50 text-green-800 dark:text-green-300 text-xs font-medium px-2 py-1 rounded-full">
+<svg class="h-3 w-3" fill="currentColor" viewbox="0 0 24 24"><path d="M22.0001 12.0001C22.0001 12.5524 21.5524 13.0001 21.0001 13.0001V15.0001C21.0001 15.5524 20.5524 16.0001 20.0001 16.0001H19.0001C18.4478 16.0001 18.0001 15.5524 18.0001 15.0001V13.0001C18.0001 12.4478 18.4478 12.0001 19.0001 12.0001H19.5001C19.7762 12.0001 20.0001 11.7762 20.0001 11.5001V10.5001C20.0001 10.2239 19.7762 10.0001 19.5001 10.0001H19.0001C18.4478 10.0001 18.0001 9.55238 18.0001 9.00009V7.00009C18.0001 6.44781 18.4478 6.00009 19.0001 6.00009H20.0001C20.5524 6.00009 21.0001 6.44781 21.0001 7.00009V9.00009C21.0001 9.55238 21.5524 10.0001 22.0001 10.0001V12.0001ZM14.0001 18.0001V16.0001C14.0001 15.4478 13.5524 15.0001 13.0001 15.0001H11.0001C10.4478 15.0001 10.0001 15.4478 10.0001 16.0001V18.0001H14.0001ZM12.0001 2.00009C12.5524 2.00009 13.0001 2.44781 13.0001 3.00009V5.00009C13.0001 5.55238 12.5524 6.00009 12.0001 6.00009C11.4478 6.00009 11.0001 5.55238 11.0001 5.00009V3.00009C11.0001 2.44781 11.4478 2.00009 12.0001 2.00009ZM17.0001 9.00009V7.00009C17.0001 6.44781 16.5524 6.00009 16.0001 6.00009H15.0001C14.4478 6.00009 14.0001 6.44781 14.0001 7.00009V9.00009C14.0001 9.55238 14.4478 10.0001 15.0001 10.0001H15.5001C15.7762 10.0001 16.0001 10.2239 16.0001 10.5001V11.5001C16.0001 11.7762 15.7762 12.0001 15.5001 12.0001H15.0001C14.4478 12.0001 14.0001 12.4478 14.0001 13.0001V15.0001H10.0001V13.0001C10.0001 12.4478 9.55238 12.0001 9.00009 12.0001H8.50009C8.2239 12.0001 8.00009 11.7762 8.00009 11.5001V10.5001C8.00009 10.2239 8.2239 10.0001 8.50009 10.0001H9.00009C9.55238 10.0001 10.0001 9.55238 10.0001 9.00009V7.00009C10.0001 6.44781 9.55238 6.00009 9.00009 6.00009H8.00009C7.44781 6.00009 7.00009 6.44781 7.00009 7.00009V9.00009H6.00009C5.44781 9.00009 5.00009 9.44781 5.00009 10.0001V12.0001H2.00009C2.00009 11.4478 2.44781 11.0001 3.00009 11.0001H4.00009C4.55238 11.0001 5.00009 10.5524 5.00009 10.0001V8.00009C5.00009 7.44781 4.55238 7.00009 4.00009 7.00009H3.00009C2.44781 7.00009 2.00009 7.44781 2.00009 8.00009V12.0001H2.00009C2.55238 12.0001 3.00009 12.4478 3.00009 13.0001V15.0001C3.00009 15.5524 2.55238 16.0001 2.00009 16.0001H3.00009C3.55238 16.0001 4.00009 16.4478 4.00009 17.0001V19.0001C4.00009 19.5524 3.55238 20.0001 3.00009 20.0001H2.00009C2.00009 20.5524 2.44781 21.0001 3.00009 21.0001H4.00009C4.55238 21.0001 5.00009 20.5524 5.00009 20.0001V18.0001C5.00009 17.4478 5.44781 17.0001 6.00009 17.0001H7.00009V19.0001C7.00009 19.5524 7.44781 20.0001 8.00009 20.0001H9.00009C9.55238 20.0001 10.0001 19.5524 10.0001 19.0001V18.0001H14.0001V19.0001C14.0001 19.5524 14.4478 20.0001 15.0001 20.0001H16.0001C16.5524 20.0001 17.0001 19.5524 17.0001 19.0001V17.0001C17.0001 16.4478 16.5524 16.0001 16.0001 16.0001H15.0001C14.4478 16.0001 14.0001 15.5524 14.0001 15.0001V13.0001H17.0001V15.0001C17.0001 15.5524 17.4478 16.0001 18.0001 16.0001H19.0001V18.0001H21.0001C21.5524 18.0001 22.0001 18.4478 22.0001 19.0001V21.0001C22.0001 21.5524 21.5524 22.0001 21.0001 22.0001C20.4478 22.0001 20.0001 21.5524 20.0001 21.0001V19.0001H18.0001V21.0001C18.0001 21.5524 17.5524 22.0001 17.0001 22.0001H14.0001C13.4478 22.0001 13.0001 21.5524 13.0001 21.0001V19.0001H11.0001V21.0001C11.0001 21.5524 10.5524 22.0001 10.0001 22.0001H7.00009C6.44781 22.0001 6.00009 21.5524 6.00009 21.0001V19.0001H5.00009C5.00009 19.0001 5.00009 19.0001 5.00009 19.0001V17.0001H6.00009C6.55238 17.0001 7.00009 16.5524 7.00009 16.0001V13.0001C7.00009 12.4478 6.55238 12.0001 6.00009 12.0001H5.00009V10.0001H7.00009V12.0001C7.00009 12.5524 7.44781 13.0001 8.00009 13.0001H10.0001V10.0001C10.0001 9.44781 9.55238 9.00009 9.00009 9.00009H8.50009C8.2239 9.00009 8.00009 8.7762 8.00009 8.50009V7.50009C8.00009 7.2239 8.2239 7.00009 8.50009 7.00009H9.00009C9.55238 7.00009 10.0001 7.44781 10.0001 8.00009V10.0001H14.0001V8.00009C14.0001 7.44781 14.4478 7.00009 15.0001 7.00009H15.5001C15.7762 7.00009 16.0001 7.2239 16.0001 7.50009V8.50009C16.0001 8.7762 15.7762 9.00009 15.5001 9.00009H15.0001C14.4478 9.00009 14.0001 9.44781 14.0001 10.0001V12.0001H17.0001V10.0001C17.0001 9.44781 17.4478 9.00009 18.0001 9.00009H18.5001C18.7762 9.00009 19.0001 8.7762 19.0001 8.50009V7.50009C19.0001 7.2239 18.7762 7.00009 18.5001 7.00009H18.0001V5.00009C18.0001 4.44781 18.4478 4.00009 19.0001 4.00009H21.0001C21.5524 4.00009 22.0001 4.44781 22.0001 5.00009V6.00009C22.0001 6.55238 21.5524 7.00009 21.0001 7.00009H20.0001V9.00009H22.0001V2.00009C22.0001 2.00009 22.0001 2.00009 22.0001 2.00009H2.00009V5.00009H4.00009V4.00009C4.00009 3.44781 4.44781 3.00009 5.00009 3.00009H6.00009C6.55238 3.00009 7.00009 3.44781 7.00009 4.00009V6.00009H11.0001V4.00009C11.0001 3.44781 11.4478 3.00009 12.0001 3.00009C12.5524 3.00009 13.0001 3.44781 13.0001 4.00009V6.00009H17.0001V4.00009C17.0001 3.44781 17.4478 3.00009 18.0001 3.00009H19.0001C19.5524 3.00009 20.0001 3.44781 20.0001 4.00009V6.00009H21.0001C21.0001 6.00009 21.0001 6.00009 21.0001 6.00009V2.00009L22.0001 2.00009V12.0001Z"></path></svg>
+                                    GPT-4
+                                </span>
+</div>
+<p class="text-gray-600 dark:text-gray-400 text-sm leading-relaxed">
+                                The keynote covered the latest advancements in large language models, focusing on efficiency and multimodal capabilities. The speaker highlighted three key
+                                areas of development, including improved reasoning, reduced hallucinations, and the integration of real-time data sources for more accurate and contextually...
+                            </p>
+<div class="flex justify-between items-center text-sm text-gray-500 dark:text-gray-400">
+<span>320 words</span>
+<a class="font-semibold text-primary hover:underline" href="#">Read More</a>
+</div>
+<div class="flex items-center gap-2 border-t border-gray-200 dark:border-gray-800 pt-4 mt-auto">
+<button class="flex items-center justify-center gap-2 h-9 px-3 rounded-md bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 text-sm font-medium">
+<span class="material-symbols-outlined text-base">content_copy</span> Copy
+                                </button>
+<button class="flex items-center justify-center gap-2 h-9 px-3 rounded-md bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 text-sm font-medium">
+<span class="material-symbols-outlined text-base">download</span> Download
+                                </button>
+<button class="flex items-center justify-center gap-2 h-9 px-3 rounded-md bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 text-sm font-medium">
+<span class="material-symbols-outlined text-base">share</span> Share
+                                </button>
+<button class="ml-auto h-9 w-9 flex items-center justify-center rounded-md text-gray-500 hover:bg-red-100 hover:text-red-600 dark:hover:bg-red-900/50 dark:hover:text-red-400">
+<span class="material-symbols-outlined text-xl">delete</span>
+</button>
+</div>
+</div>
+<!-- Card 2 -->
+<div class="flex flex-col gap-4 p-5 bg-white dark:bg-gray-900/50 rounded-xl border border-gray-200 dark:border-gray-800">
+<div class="flex justify-between items-start">
+<a class="text-lg font-bold text-gray-900 dark:text-white hover:text-primary dark:hover:text-primary/90 transition-colors" href="#">Quarterly Earnings Call Q2</a>
+<span class="text-xs text-gray-500 dark:text-gray-400 whitespace-nowrap">1 day ago</span>
+</div>
+<div>
+<span class="inline-flex items-center gap-1.5 bg-purple-100 dark:bg-purple-900/50 text-purple-800 dark:text-purple-300 text-xs font-medium px-2 py-1 rounded-full">
+<svg class="h-3 w-3" fill="currentColor" viewbox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 15c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5z"></path></svg>
+                                    Claude 3
+                                </span>
+</div>
+<p class="text-gray-600 dark:text-gray-400 text-sm leading-relaxed">
+                               The CFO discussed the company's financial performance for the second quarter, noting a 15% increase in revenue year-over-year, driven by strong growth in the
+                                enterprise segment. They also outlined a positive outlook for Q3, with projected growth in international markets and new product launches expected to...
+                            </p>
+<div class="flex justify-between items-center text-sm text-gray-500 dark:text-gray-400">
+<span>280 words</span>
+<a class="font-semibold text-primary hover:underline" href="#">Read More</a>
+</div>
+<div class="flex items-center gap-2 border-t border-gray-200 dark:border-gray-800 pt-4 mt-auto">
+<button class="flex items-center justify-center gap-2 h-9 px-3 rounded-md bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 text-sm font-medium">
+<span class="material-symbols-outlined text-base">content_copy</span> Copy
+                                </button>
+<button class="flex items-center justify-center gap-2 h-9 px-3 rounded-md bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 text-sm font-medium">
+<span class="material-symbols-outlined text-base">download</span> Download
+                                </button>
+<button class="flex items-center justify-center gap-2 h-9 px-3 rounded-md bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 text-sm font-medium">
+<span class="material-symbols-outlined text-base">share</span> Share
+                                </button>
+<button class="ml-auto h-9 w-9 flex items-center justify-center rounded-md text-gray-500 hover:bg-red-100 hover:text-red-600 dark:hover:bg-red-900/50 dark:hover:text-red-400">
+<span class="material-symbols-outlined text-xl">delete</span>
+</button>
+</div>
+</div>
+<!-- Card 3 -->
+<div class="flex flex-col gap-4 p-5 bg-white dark:bg-gray-900/50 rounded-xl border border-gray-200 dark:border-gray-800">
+<div class="flex justify-between items-start">
+<a class="text-lg font-bold text-gray-900 dark:text-white hover:text-primary dark:hover:text-primary/90 transition-colors" href="#">User Research Interview #12</a>
+<span class="text-xs text-gray-500 dark:text-gray-400 whitespace-nowrap">2 days ago</span>
+</div>
+<div>
+<span class="inline-flex items-center gap-1.5 bg-green-100 dark:bg-green-900/50 text-green-800 dark:text-green-300 text-xs font-medium px-2 py-1 rounded-full">
+<svg class="h-3 w-3" fill="currentColor" viewbox="0 0 24 24"><path d="M22.0001 12.0001C22.0001 12.5524 21.5524 13.0001 21.0001 13.0001V15.0001C21.0001 15.5524 20.5524 16.0001 20.0001 16.0001H19.0001C18.4478 16.0001 18.0001 15.5524 18.0001 15.0001V13.0001C18.0001 12.4478 18.4478 12.0001 19.0001 12.0001H19.5001C19.7762 12.0001 20.0001 11.7762 20.0001 11.5001V10.5001C20.0001 10.2239 19.7762 10.0001 19.5001 10.0001H19.0001C18.4478 10.0001 18.0001 9.55238 18.0001 9.00009V7.00009C18.0001 6.44781 18.4478 6.00009 19.0001 6.00009H20.0001C20.5524 6.00009 21.0001 6.44781 21.0001 7.00009V9.00009C21.0001 9.55238 21.5524 10.0001 22.0001 10.0001V12.0001ZM14.0001 18.0001V16.0001C14.0001 15.4478 13.5524 15.0001 13.0001 15.0001H11.0001C10.4478 15.0001 10.0001 15.4478 10.0001 16.0001V18.0001H14.0001ZM12.0001 2.00009C12.5524 2.00009 13.0001 2.44781 13.0001 3.00009V5.00009C13.0001 5.55238 12.5524 6.00009 12.0001 6.00009C11.4478 6.00009 11.0001 5.55238 11.0001 5.00009V3.00009C11.0001 2.44781 11.4478 2.00009 12.0001 2.00009ZM17.0001 9.00009V7.00009C17.0001 6.44781 16.5524 6.00009 16.0001 6.00009H15.0001C14.4478 6.00009 14.0001 6.44781 14.0001 7.00009V9.00009C14.0001 9.55238 14.4478 10.0001 15.0001 10.0001H15.5001C15.7762 10.0001 16.0001 10.2239 16.0001 10.5001V11.5001C16.0001 11.7762 15.7762 12.0001 15.5001 12.0001H15.0001C14.4478 12.0001 14.0001 12.4478 14.0001 13.0001V15.0001H10.0001V13.0001C10.0001 12.4478 9.55238 12.0001 9.00009 12.0001H8.50009C8.2239 12.0001 8.00009 11.7762 8.00009 11.5001V10.5001C8.00009 10.2239 8.2239 10.0001 8.50009 10.0001H9.00009C9.55238 10.0001 10.0001 9.55238 10.0001 9.00009V7.00009C10.0001 6.44781 9.55238 6.00009 9.00009 6.00009H8.00009C7.44781 6.00009 7.00009 6.44781 7.00009 7.00009V9.00009H6.00009C5.44781 9.00009 5.00009 9.44781 5.00009 10.0001V12.0001H2.00009C2.00009 11.4478 2.44781 11.0001 3.00009 11.0001H4.00009C4.55238 11.0001 5.00009 10.5524 5.00009 10.0001V8.00009C5.00009 7.44781 4.55238 7.00009 4.00009 7.00009H3.00009C2.44781 7.00009 2.00009 7.44781 2.00009 8.00009V12.0001H2.00009C2.55238 12.0001 3.00009 12.4478 3.00009 13.0001V15.0001C3.00009 15.5524 2.55238 16.0001 2.00009 16.0001H3.00009C3.55238 16.0001 4.00009 16.4478 4.00009 17.0001V19.0001C4.00009 19.5524 3.55238 20.0001 3.00009 20.0001H2.00009C2.00009 20.5524 2.44781 21.0001 3.00009 21.0001H4.00009C4.55238 21.0001 5.00009 20.5524 5.00009 20.0001V18.0001C5.00009 17.4478 5.44781 17.0001 6.00009 17.0001H7.00009V19.0001C7.00009 19.5524 7.44781 20.0001 8.00009 20.0001H9.00009C9.55238 20.0001 10.0001 19.5524 10.0001 19.0001V18.0001H14.0001V19.0001C14.0001 19.5524 14.4478 20.0001 15.0001 20.0001H16.0001C16.5524 20.0001 17.0001 19.5524 17.0001 19.0001V17.0001C17.0001 16.4478 16.5524 16.0001 16.0001 16.0001H15.0001C14.4478 16.0001 14.0001 15.5524 14.0001 15.0001V13.0001H17.0001V15.0001C17.0001 15.5524 17.4478 16.0001 18.0001 16.0001H19.0001V18.0001H21.0001C21.5524 18.0001 22.0001 18.4478 22.0001 19.0001V21.0001C22.0001 21.5524 21.5524 22.0001 21.0001 22.0001C20.4478 22.0001 20.0001 21.5524 20.0001 21.0001V19.0001H18.0001V21.0001C18.0001 21.5524 17.5524 22.0001 17.0001 22.0001H14.0001C13.4478 22.0001 13.0001 21.5524 13.0001 21.0001V19.0001H11.0001V21.0001C11.0001 21.5524 10.5524 22.0001 10.0001 22.0001H7.00009C6.44781 22.0001 6.00009 21.5524 6.00009 21.0001V19.0001H5.00009C5.00009 19.0001 5.00009 19.0001 5.00009 19.0001V17.0001H6.00009C6.55238 17.0001 7.00009 16.5524 7.00009 16.0001V13.0001C7.00009 12.4478 6.55238 12.0001 6.00009 12.0001H5.00009V10.0001H7.00009V12.0001C7.00009 12.5524 7.44781 13.0001 8.00009 13.0001H10.0001V10.0001C10.0001 9.44781 9.55238 9.00009 9.00009 9.00009H8.50009C8.2239 9.00009 8.00009 8.7762 8.00009 8.50009V7.50009C8.00009 7.2239 8.2239 7.00009 8.50009 7.00009H9.00009C9.55238 7.00009 10.0001 7.44781 10.0001 8.00009V10.0001H14.0001V8.00009C14.0001 7.44781 14.4478 7.00009 15.0001 7.00009H15.5001C15.7762 7.00009 16.0001 7.2239 16.0001 7.50009V8.50009C16.0001 8.7762 15.7762 9.00009 15.5001 9.00009H15.0001C14.4478 9.00009 14.0001 9.44781 14.0001 10.0001V12.0001H17.0001V10.0001C17.0001 9.44781 17.4478 9.00009 18.0001 9.00009H18.5001C18.7762 9.00009 19.0001 8.7762 19.0001 8.50009V7.50009C19.0001 7.2239 18.7762 7.00009 18.5001 7.00009H18.0001V5.00009C18.0001 4.44781 18.4478 4.00009 19.0001 4.00009H21.0001C21.5524 4.00009 22.0001 4.44781 22.0001 5.00009V6.00009C22.0001 6.55238 21.5524 7.00009 21.0001 7.00009H20.0001V9.00009H22.0001V2.00009C22.0001 2.00009 22.0001 2.00009 22.0001 2.00009H2.00009V5.00009H4.00009V4.00009C4.00009 3.44781 4.44781 3.00009 5.00009 3.00009H6.00009C6.55238 3.00009 7.00009 3.44781 7.00009 4.00009V6.00009H11.0001V4.00009C11.0001 3.44781 11.4478 3.00009 12.0001 3.00009C12.5524 3.00009 13.0001 3.44781 13.0001 4.00009V6.00009H17.0001V4.00009C17.0001 3.44781 17.4478 3.00009 18.0001 3.00009H19.0001C19.5524 3.00009 20.0001 3.44781 20.0001 4.00009V6.00009H21.0001C21.0001 6.00009 21.0001 6.00009 21.0001 6.00009V2.00009L22.0001 2.00009V12.0001Z"></path></svg>
+                                    GPT-4
+                                </span>
+</div>
+<p class="text-gray-600 dark:text-gray-400 text-sm leading-relaxed">
+                               The user expressed frustration with the current onboarding process, suggesting that a guided tour or a checklist would be helpful. They also praised the new
+                                collaboration feature, but wished for more granular permission controls. Overall, the feedback was constructive and highlighted key areas for UI/UX...
+                            </p>
+<div class="flex justify-between items-center text-sm text-gray-500 dark:text-gray-400">
+<span>150 words</span>
+<a class="font-semibold text-primary hover:underline" href="#">Read More</a>
+</div>
+<div class="flex items-center gap-2 border-t border-gray-200 dark:border-gray-800 pt-4 mt-auto">
+<button class="flex items-center justify-center gap-2 h-9 px-3 rounded-md bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 text-sm font-medium">
+<span class="material-symbols-outlined text-base">content_copy</span> Copy
+                                </button>
+<button class="flex items-center justify-center gap-2 h-9 px-3 rounded-md bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 text-sm font-medium">
+<span class="material-symbols-outlined text-base">download</span> Download
+                                </button>
+<button class="flex items-center justify-center gap-2 h-9 px-3 rounded-md bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 text-sm font-medium">
+<span class="material-symbols-outlined text-base">share</span> Share
+                                </button>
+<button class="ml-auto h-9 w-9 flex items-center justify-center rounded-md text-gray-500 hover:bg-red-100 hover:text-red-600 dark:hover:bg-red-900/50 dark:hover:text-red-400">
+<span class="material-symbols-outlined text-xl">delete</span>
+</button>
+</div>
+</div>
+<!-- Card 4 -->
+<div class="flex flex-col gap-4 p-5 bg-white dark:bg-gray-900/50 rounded-xl border border-gray-200 dark:border-gray-800">
+<div class="flex justify-between items-start">
+<a class="text-lg font-bold text-gray-900 dark:text-white hover:text-primary dark:hover:text-primary/90 transition-colors" href="#">Marketing Strategy Meeting</a>
+<span class="text-xs text-gray-500 dark:text-gray-400 whitespace-nowrap">5 days ago</span>
+</div>
+<div>
+<span class="inline-flex items-center gap-1.5 bg-orange-100 dark:bg-orange-900/50 text-orange-800 dark:text-orange-300 text-xs font-medium px-2 py-1 rounded-full">
+<svg class="h-3 w-3" fill="currentColor" viewbox="0 0 24 24"><path d="M12,2A10,10,0,0,0,2,12a10,10,0,0,0,10,10,10,10,0,0,0,10-10A10,10,0,0,0,12,2Z"></path></svg>
+                                    Llama 3
+                                </span>
+</div>
+<p class="text-gray-600 dark:text-gray-400 text-sm leading-relaxed">
+                               The team brainstormed ideas for the upcoming product launch campaign. Key themes included leveraging social media influencers and creating a series of short,
+                                engaging video ads for platforms like TikTok and Instagram Reels. The discussion also covered budget allocation and key performance indicators for...
+                            </p>
+<div class="flex justify-between items-center text-sm text-gray-500 dark:text-gray-400">
+<span>410 words</span>
+<a class="font-semibold text-primary hover:underline" href="#">Read More</a>
+</div>
+<div class="flex items-center gap-2 border-t border-gray-200 dark:border-gray-800 pt-4 mt-auto">
+<button class="flex items-center justify-center gap-2 h-9 px-3 rounded-md bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 text-sm font-medium">
+<span class="material-symbols-outlined text-base">content_copy</span> Copy
+                                </button>
+<button class="flex items-center justify-center gap-2 h-9 px-3 rounded-md bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 text-sm font-medium">
+<span class="material-symbols-outlined text-base">download</span> Download
+                                </button>
+<button class="flex items-center justify-center gap-2 h-9 px-3 rounded-md bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 text-sm font-medium">
+<span class="material-symbols-outlined text-base">share</span> Share
+                                </button>
+<button class="ml-auto h-9 w-9 flex items-center justify-center rounded-md text-gray-500 hover:bg-red-100 hover:text-red-600 dark:hover:bg-red-900/50 dark:hover:text-red-400">
+<span class="material-symbols-outlined text-xl">delete</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Pagination -->
+<div class="flex items-center justify-center p-4 mt-6">
+<a class="flex size-10 items-center justify-center text-gray-600 dark:text-gray-400" href="#">
+<span class="material-symbols-outlined">chevron_left</span>
+</a>
+<a class="text-sm font-bold leading-normal tracking-[0.015em] flex size-10 items-center justify-center text-white rounded-full bg-primary" href="#">1</a>
+<a class="text-sm font-normal leading-normal flex size-10 items-center justify-center text-gray-700 dark:text-gray-300 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800" href="#">2</a>
+<a class="text-sm font-normal leading-normal flex size-10 items-center justify-center text-gray-700 dark:text-gray-300 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800" href="#">3</a>
+<span class="text-sm font-normal leading-normal flex size-10 items-center justify-center text-gray-500 dark:text-gray-500 rounded-full">...</span>
+<a class="text-sm font-normal leading-normal flex size-10 items-center justify-center text-gray-700 dark:text-gray-300 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800" href="#">8</a>
+<a class="text-sm font-normal leading-normal flex size-10 items-center justify-center text-gray-700 dark:text-gray-300 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800" href="#">9</a>
+<a class="text-sm font-normal leading-normal flex size-10 items-center justify-center text-gray-700 dark:text-gray-300 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800" href="#">10</a>
+<a class="flex size-10 items-center justify-center text-gray-600 dark:text-gray-400" href="#">
+<span class="material-symbols-outlined">chevron_right</span>
+</a>
+</div>
+</div>
+</main>
+</div>
+</div>
+</body></html>

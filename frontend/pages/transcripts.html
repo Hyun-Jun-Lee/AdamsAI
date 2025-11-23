@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>AdamsAI - Transcripts</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<style>
+    .material-symbols-outlined {
+      font-variation-settings:
+      'FILL' 0,
+      'wght' 400,
+      'GRAD' 0,
+      'opsz' 24
+    }
+  </style>
+<script>
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "primary": "#3c83f6",
+            "background-light": "#f5f7f8",
+            "background-dark": "#101722",
+            "surface-light": "#ffffff",
+            "surface-dark": "#1a2431",
+            "text-primary-light": "#111418",
+            "text-primary-dark": "#f0f2f5",
+            "text-secondary-light": "#60708a",
+            "text-secondary-dark": "#94a3b8",
+            "border-light": "#e5e7eb",
+            "border-dark": "#334155",
+          },
+          fontFamily: {
+            "display": ["Inter", "sans-serif"]
+          },
+          borderRadius: {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+        },
+      },
+    }
+  </script>
+</head>
+<body class="font-display bg-background-light dark:bg-background-dark">
+<script type="module" src="/js/transcripts.js"></script>
+<div class="flex min-h-screen">
+<!-- SideNavBar Component -->
+<aside class="w-64 flex-shrink-0 bg-surface-light dark:bg-surface-dark border-r border-border-light dark:border-border-dark hidden lg:flex flex-col">
+<div class="flex h-full flex-col justify-between p-4">
+<div class="flex flex-col gap-4">
+<div class="flex items-center gap-3 px-2">
+<div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10" data-alt="AdamsAI company logo" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDgLJjPLEb_2-LcdHqCAMyziNDgraV4GP8WEa5iaGy3h6TWtrZigDEtcCLgHJz4mrUkUFhdrTyyTGzfaR6_Vg1eUxPIO1rPqODQbgxt0CQZ_rSMAgbQgIEc85TKF9zuQ2l6jew3KrGdNsKwepyO8HYMhxx8UX1wAW8FEIonT7EFGrZPO8hPYymH9kzeA49WFrBnVrMncaq_j3j9MPHz5Iz7phYsbeUMTvn6hfJcAch2PDnFVbSAkCeIX80G6ptWDOO-F3SKzxJtb-s");'></div>
+<div class="flex flex-col">
+<h1 class="text-text-primary-light dark:text-text-primary-dark text-base font-medium leading-normal">AdamsAI</h1>
+<p class="text-text-secondary-light dark:text-text-secondary-dark text-sm font-normal leading-normal">Video Summarization</p>
+</div>
+</div>
+<nav class="flex flex-col gap-2 mt-4">
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-primary/10 text-text-primary-light dark:text-text-primary-dark" href="#">
+<span class="material-symbols-outlined text-text-secondary-light dark:text-text-secondary-dark">dashboard</span>
+<p class="text-sm font-medium leading-normal">Dashboard</p>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg bg-primary/10 text-primary" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">description</span>
+<p class="text-sm font-medium leading-normal">Transcripts</p>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-primary/10 text-text-primary-light dark:text-text-primary-dark" href="#">
+<span class="material-symbols-outlined text-text-secondary-light dark:text-text-secondary-dark">article</span>
+<p class="text-sm font-medium leading-normal">Summaries</p>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-primary/10 text-text-primary-light dark:text-text-primary-dark" href="#">
+<span class="material-symbols-outlined text-text-secondary-light dark:text-text-secondary-dark">settings</span>
+<p class="text-sm font-medium leading-normal">Settings</p>
+</a>
+</nav>
+</div>
+<div class="flex flex-col gap-4">
+<button class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-4 bg-primary text-white text-sm font-bold leading-normal tracking-[0.015em] hover:bg-primary/90">
+<span class="truncate">Upgrade Plan</span>
+</button>
+<div class="flex flex-col gap-1">
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-primary/10 text-text-primary-light dark:text-text-primary-dark" href="#">
+<span class="material-symbols-outlined text-text-secondary-light dark:text-text-secondary-dark">help</span>
+<p class="text-sm font-medium leading-normal">Help</p>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-primary/10 text-text-primary-light dark:text-text-primary-dark" href="#">
+<span class="material-symbols-outlined text-text-secondary-light dark:text-text-secondary-dark">logout</span>
+<p class="text-sm font-medium leading-normal">Logout</p>
+</a>
+</div>
+</div>
+</div>
+</aside>
+<!-- Main Content -->
+<main class="flex-1 p-4 sm:p-6 lg:p-8">
+<div class="mx-auto max-w-7xl">
+<!-- PageHeading Component -->
+<div class="flex flex-wrap justify-between items-center gap-4 mb-6">
+<h1 class="text-text-primary-light dark:text-text-primary-dark text-4xl font-black leading-tight tracking-[-0.033em]">Transcripts</h1>
+<button class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-4 bg-primary text-white text-sm font-bold leading-normal tracking-[0.015em] hover:bg-primary/90 gap-2">
+<span class="material-symbols-outlined">add</span>
+<span class="truncate">Create Transcript</span>
+</button>
+</div>
+<!-- Search and Filter Bar -->
+<div class="flex flex-col sm:flex-row gap-4 mb-6">
+<!-- SearchBar Component -->
+<div class="flex-grow">
+<label class="flex flex-col min-w-40 h-12 w-full">
+<div class="flex w-full flex-1 items-stretch rounded-lg h-full">
+<div class="text-text-secondary-light dark:text-text-secondary-dark flex bg-surface-light dark:bg-surface-dark items-center justify-center pl-4 rounded-l-lg border border-border-light dark:border-border-dark border-r-0">
+<span class="material-symbols-outlined">search</span>
+</div>
+<input class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-text-primary-light dark:text-text-primary-dark focus:outline-none focus:ring-2 focus:ring-primary border border-border-light dark:border-border-dark bg-surface-light dark:bg-surface-dark h-full placeholder:text-text-secondary-light dark:placeholder:text-text-secondary-dark px-4 rounded-l-none border-l-0 pl-2 text-base font-normal leading-normal" placeholder="Search in transcripts..." value=""/>
+</div>
+</label>
+</div>
+<!-- Chips Component (Filters) -->
+<div class="flex gap-3">
+<button class="flex h-12 shrink-0 items-center justify-center gap-x-2 rounded-lg bg-surface-light dark:bg-surface-dark pl-4 pr-3 border border-border-light dark:border-border-dark hover:border-primary/50">
+<p class="text-text-primary-light dark:text-text-primary-dark text-sm font-medium leading-normal">Language</p>
+<span class="material-symbols-outlined text-text-secondary-light dark:text-text-secondary-dark">expand_more</span>
+</button>
+<button class="flex h-12 shrink-0 items-center justify-center gap-x-2 rounded-lg bg-surface-light dark:bg-surface-dark pl-4 pr-3 border border-border-light dark:border-border-dark hover:border-primary/50">
+<p class="text-text-primary-light dark:text-text-primary-dark text-sm font-medium leading-normal">Date Range</p>
+<span class="material-symbols-outlined text-text-secondary-light dark:text-text-secondary-dark">expand_more</span>
+</button>
+</div>
+</div>
+<!-- ImageGrid Component (Transcript Cards) -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+<div class="flex flex-col bg-surface-light dark:bg-surface-dark rounded-xl border border-border-light dark:border-border-dark shadow-sm hover:shadow-lg hover:border-primary/50 transition-all duration-300">
+<div class="p-4 border-b border-border-light dark:border-border-dark">
+<div class="flex justify-between items-start gap-2">
+<p class="text-text-primary-light dark:text-text-primary-dark text-base font-semibold leading-normal">Meeting_ProjectX.mp3</p>
+<button class="text-text-secondary-light dark:text-text-secondary-dark hover:text-primary"><span class="material-symbols-outlined">more_vert</span></button>
+</div>
+<div class="flex items-center gap-2 mt-1">
+<span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">Korean</span>
+<span class="text-text-secondary-light dark:text-text-secondary-dark text-sm">·</span>
+<p class="text-text-secondary-light dark:text-text-secondary-dark text-sm font-normal leading-normal">Oct 27, 2023</p>
+</div>
+</div>
+<div class="p-4 flex-grow">
+<p class="text-text-secondary-light dark:text-text-secondary-dark text-sm font-normal leading-relaxed line-clamp-3">
+                  Here is a preview of the transcript text that has been generated from the audio file. It is truncated to about three lines to give the user an idea of the content before they decide to view the full transcript or generate a summary...
+                </p>
+</div>
+<div class="p-4 border-t border-border-light dark:border-border-dark flex justify-between items-center">
+<p class="text-text-secondary-light dark:text-text-secondary-dark text-sm font-normal">3,450 chars</p>
+<button class="flex min-w-[84px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-9 px-3 bg-primary/10 text-primary text-sm font-bold leading-normal tracking-[0.015em] hover:bg-primary/20">
+<span class="truncate">Generate Summary</span>
+</button>
+</div>
+</div>
+<div class="flex flex-col bg-surface-light dark:bg-surface-dark rounded-xl border border-border-light dark:border-border-dark shadow-sm hover:shadow-lg hover:border-primary/50 transition-all duration-300">
+<div class="p-4 border-b border-border-light dark:border-border-dark">
+<div class="flex justify-between items-start gap-2">
+<p class="text-text-primary-light dark:text-text-primary-dark text-base font-semibold leading-normal">Interview_Jane_Doe.wav</p>
+<button class="text-text-secondary-light dark:text-text-secondary-dark hover:text-primary"><span class="material-symbols-outlined">more_vert</span></button>
+</div>
+<div class="flex items-center gap-2 mt-1">
+<span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">English</span>
+<span class="text-text-secondary-light dark:text-text-secondary-dark text-sm">·</span>
+<p class="text-text-secondary-light dark:text-text-secondary-dark text-sm font-normal leading-normal">Oct 26, 2023</p>
+</div>
+</div>
+<div class="p-4 flex-grow">
+<p class="text-text-secondary-light dark:text-text-secondary-dark text-sm font-normal leading-relaxed line-clamp-3">
+                    Another preview of a different transcript. This one might be longer, so the preview still needs to be concise and effective at communicating the essence of the audio file's content. We ensure it wraps correctly...
+                </p>
+</div>
+<div class="p-4 border-t border-border-light dark:border-border-dark flex justify-between items-center">
+<p class="text-text-secondary-light dark:text-text-secondary-dark text-sm font-normal">5,120 chars</p>
+<button class="flex min-w-[84px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-9 px-3 bg-primary/10 text-primary text-sm font-bold leading-normal tracking-[0.015em] hover:bg-primary/20">
+<span class="truncate">Generate Summary</span>
+</button>
+</div>
+</div>
+<div class="flex flex-col bg-surface-light dark:bg-surface-dark rounded-xl border border-border-light dark:border-border-dark shadow-sm hover:shadow-lg hover:border-primary/50 transition-all duration-300">
+<div class="p-4 border-b border-border-light dark:border-border-dark">
+<div class="flex justify-between items-start gap-2">
+<p class="text-text-primary-light dark:text-text-primary-dark text-base font-semibold leading-normal">Lecture_AI_Ethics.mp4</p>
+<button class="text-text-secondary-light dark:text-text-secondary-dark hover:text-primary"><span class="material-symbols-outlined">more_vert</span></button>
+</div>
+<div class="flex items-center gap-2 mt-1">
+<span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">English</span>
+<span class="text-text-secondary-light dark:text-text-secondary-dark text-sm">·</span>
+<p class="text-text-secondary-light dark:text-text-secondary-dark text-sm font-normal leading-normal">Oct 25, 2023</p>
+</div>
+</div>
+<div class="p-4 flex-grow">
+<p class="text-text-secondary-light dark:text-text-secondary-dark text-sm font-normal leading-relaxed line-clamp-3">
+                    This is a preview for a much longer lecture file, showcasing how the system handles larger amounts of text. The snippet provides just enough context to be useful, without overwhelming the user on this management screen...
+                </p>
+</div>
+<div class="p-4 border-t border-border-light dark:border-border-dark flex justify-between items-center">
+<p class="text-text-secondary-light dark:text-text-secondary-dark text-sm font-normal">8,900 chars</p>
+<button class="flex min-w-[84px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-9 px-3 bg-primary/10 text-primary text-sm font-bold leading-normal tracking-[0.015em] hover:bg-primary/20">
+<span class="truncate">Generate Summary</span>
+</button>
+</div>
+</div>
+<div class="flex flex-col bg-surface-light dark:bg-surface-dark rounded-xl border border-border-light dark:border-border-dark shadow-sm hover:shadow-lg hover:border-primary/50 transition-all duration-300">
+<div class="p-4 border-b border-border-light dark:border-border-dark">
+<div class="flex justify-between items-start gap-2">
+<p class="text-text-primary-light dark:text-text-primary-dark text-base font-semibold leading-normal">Sales_Call_Q4.m4a</p>
+<button class="text-text-secondary-light dark:text-text-secondary-dark hover:text-primary"><span class="material-symbols-outlined">more_vert</span></button>
+</div>
+<div class="flex items-center gap-2 mt-1">
+<span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">English</span>
+<span class="text-text-secondary-light dark:text-text-secondary-dark text-sm">·</span>
+<p class="text-text-secondary-light dark:text-text-secondary-dark text-sm font-normal leading-normal">Oct 24, 2023</p>
+</div>
+</div>
+<div class="p-4 flex-grow">
+<p class="text-text-secondary-light dark:text-text-secondary-dark text-sm font-normal leading-relaxed line-clamp-3">
+                    Preview of a sales call. The text here might contain specific keywords or phrases that are important for the user to see at a glance. The system intelligently picks the most relevant opening sentences for this preview...
+                </p>
+</div>
+<div class="p-4 border-t border-border-light dark:border-border-dark flex justify-between items-center">
+<p class="text-text-secondary-light dark:text-text-secondary-dark text-sm font-normal">2,800 chars</p>
+<button class="flex min-w-[84px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-9 px-3 bg-primary/10 text-primary text-sm font-bold leading-normal tracking-[0.015em] hover:bg-primary/20">
+<span class="truncate">Generate Summary</span>
+</button>
+</div>
+</div>
+<!-- Empty State Card -->
+<div class="col-span-1 md:col-span-2 lg:col-span-2 xl:col-span-3 flex flex-col items-center justify-center text-center p-12 bg-surface-light dark:bg-surface-dark rounded-xl border-2 border-dashed border-border-light dark:border-border-dark">
+<span class="material-symbols-outlined text-5xl text-text-secondary-light dark:text-text-secondary-dark mb-4">description</span>
+<h3 class="text-xl font-semibold text-text-primary-light dark:text-text-primary-dark mb-1">No Transcripts Found</h3>
+<p class="text-text-secondary-light dark:text-text-secondary-dark mb-4 max-w-xs">It looks like there are no transcripts matching your search. Try creating a new one!</p>
+<button class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-4 bg-primary text-white text-sm font-bold leading-normal tracking-[0.015em] hover:bg-primary/90 gap-2">
+<span class="material-symbols-outlined">add</span>
+<span class="truncate">Create Transcript</span>
+</button>
+</div>
+</div>
+</div>
+</main>
+</div>
+</body></html>

@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>AdamsAI - Video Management</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "primary": "#3c83f6",
+              "background-light": "#f5f7f8",
+              "background-dark": "#101722",
+            },
+            fontFamily: {
+              "display": ["Inter", "sans-serif"]
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+</head>
+<body class="font-display bg-background-light dark:bg-background-dark text-gray-800 dark:text-gray-200">
+<script type="module" src="/js/videos.js"></script>
+<div class="relative flex h-auto min-h-screen w-full flex-col group/design-root overflow-x-hidden">
+<header class="flex items-center justify-between whitespace-nowrap border-b border-solid border-gray-200 dark:border-gray-700 px-10 py-3 bg-white dark:bg-background-dark/50 sticky top-0 z-10 backdrop-blur-sm">
+<div class="flex items-center gap-4 text-gray-900 dark:text-white">
+<div class="size-6 text-primary">
+<svg fill="none" viewbox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+<path clip-rule="evenodd" d="M24 4H42V17.3333V30.6667H24V44H6V30.6667V17.3333H24V4Z" fill="currentColor" fill-rule="evenodd"></path>
+</svg>
+</div>
+<h2 class="text-lg font-bold leading-tight tracking-[-0.015em]">AdamsAI</h2>
+</div>
+<div class="flex flex-1 justify-end items-center gap-6">
+<nav class="flex items-center gap-8">
+<a class="text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-primary dark:hover:text-primary" href="#">Dashboard</a>
+<a class="text-sm font-bold text-primary dark:text-primary" href="#">Videos</a>
+<a class="text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-primary dark:hover:text-primary" href="#">Settings</a>
+<a class="text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-primary dark:hover:text-primary" href="#">Help</a>
+</nav>
+<div class="flex items-center gap-4">
+<button class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-4 bg-primary text-white text-sm font-bold leading-normal tracking-[0.015em]">
+<span class="truncate">Upgrade</span>
+</button>
+<button class="flex max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 bg-background-light dark:bg-background-dark text-gray-800 dark:text-gray-200 gap-2 text-sm font-bold leading-normal tracking-[0.015em] min-w-0 px-2.5">
+<span class="material-symbols-outlined text-xl">notifications</span>
+</button>
+<div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10" data-alt="User avatar image" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuAsSJ2Vhb58oNVsIfMWotLKw_HhuugfNHoxqGYCOUYQr_OAK_Hm57lr_FrovW26Jw7lSuNU6D96n0ZRFxbZcH1YQXtnNEmZeEEi5bZuR6B37SDAOwcGIiTgf5Gl-r2cwcW1zBfTxG8dBLEy7xEQN3G-Nb2SClqLghTc4xGvoVgi7Ai0FQUk1X3RaWPkgUTBVcRWCfuSZji4wu37rQdzHfeKwHhW13_0XlH-BnhV4XJYVkSTN1WLWVH4QygQycWc_OUsNBOVfI4yfcA");'></div>
+</div>
+</div>
+</header>
+<main class="w-full max-w-screen-2xl mx-auto px-6 lg:px-10 py-8">
+<div class="flex flex-col gap-6">
+<div class="flex flex-wrap items-center gap-2">
+<a class="text-gray-500 dark:text-gray-400 text-sm font-medium leading-normal hover:text-primary" href="#">Home</a>
+<span class="text-gray-500 dark:text-gray-400 text-sm font-medium leading-normal">/</span>
+<span class="text-gray-800 dark:text-gray-200 text-sm font-medium leading-normal">Videos</span>
+</div>
+<div class="flex flex-wrap justify-between items-center gap-3">
+<p class="text-gray-900 dark:text-white text-4xl font-black leading-tight tracking-[-0.033em] min-w-72">Videos</p>
+</div>
+<div class="flex flex-col lg:flex-row gap-8">
+<div class="w-full lg:w-[70%]">
+<div class="bg-white dark:bg-background-dark/50 rounded-xl shadow-sm p-6 flex flex-col gap-4">
+<div class="flex justify-between items-center">
+<div class="flex gap-4">
+<select class="block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-background-dark shadow-sm focus:border-primary focus:ring-primary sm:text-sm">
+<option>All</option>
+<option>Uploaded</option>
+<option>Processing</option>
+<option>Completed</option>
+<option>Failed</option>
+</select>
+</div>
+<div class="relative">
+<div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+<span class="material-symbols-outlined text-gray-400">search</span>
+</div>
+<input class="block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-background-dark pl-10 focus:border-primary focus:ring-primary sm:text-sm" placeholder="Search videos..." type="text"/>
+</div>
+</div>
+<div class="overflow-x-auto">
+<table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+<thead class="bg-gray-50 dark:bg-gray-800">
+<tr>
+<th class="p-4" scope="col"><input class="rounded border-gray-300 text-primary focus:ring-primary" type="checkbox"/></th>
+<th class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-gray-200" scope="col">Thumbnail</th>
+<th class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-gray-200" scope="col">Filename</th>
+<th class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-gray-200" scope="col">Source</th>
+<th class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-gray-200" scope="col">Size</th>
+<th class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-gray-200" scope="col">Duration</th>
+<th class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-gray-200" scope="col">Status</th>
+<th class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-gray-200" scope="col">Created</th>
+<th class="relative py-3.5 pl-3 pr-4 sm:pr-6" scope="col"><span class="sr-only">Actions</span></th>
+</tr>
+</thead>
+<tbody class="divide-y divide-gray-200 dark:divide-gray-700 bg-white dark:bg-background-dark/50">
+<tr class="hover:bg-gray-50 dark:hover:bg-gray-800/50">
+<td class="p-4"><input class="rounded border-gray-300 text-primary focus:ring-primary" type="checkbox"/></td>
+<td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500"><img class="h-10 w-16 rounded-md object-cover" data-alt="Science lab video thumbnail" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDSUbPGWdq8l_DiAR6A_q5WVLCNpva7yR2o4Z1dAg0dohrpZ20ta2O7U1bWXnOMew59PmEHvQTZAlNY0DELpiTQ2w29F6Kl1zm6V_RN3fw0NVjX514sJTN5Qj5aiPdvEMuoAZL6C31sHm5-5kGGgwYNdjyrAMlfnKjERDTBPI-z7brN2mDNOwhsxcAUcSuPY62BFQvNv6aHHvXoQMaGPbtzxiavyxTvDZUGVP6uX-YjgalO6VmsPXM2uVTz6H0qRfVYl1BwW2jvx_4"/></td>
+<td class="whitespace-nowrap px-3 py-4 text-sm font-medium text-gray-900 dark:text-gray-200">project_final_render.mp4</td>
+<td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500"><span class="material-symbols-outlined text-xl">upload_file</span></td>
+<td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">1.2 GB</td>
+<td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">12:34</td>
+<td class="whitespace-nowrap px-3 py-4 text-sm"><span class="inline-flex items-center rounded-full bg-green-100 dark:bg-green-900/50 px-2.5 py-0.5 text-xs font-medium text-green-800 dark:text-green-300">Completed</span></td>
+<td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">2023-10-26</td>
+<td class="whitespace-nowrap px-3 py-4 text-right text-sm font-medium"><button class="text-gray-500 hover:text-primary"><span class="material-symbols-outlined">more_vert</span></button></td>
+</tr>
+<tr class="hover:bg-gray-50 dark:hover:bg-gray-800/50">
+<td class="p-4"><input class="rounded border-gray-300 text-primary focus:ring-primary" type="checkbox"/></td>
+<td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500"><img class="h-10 w-16 rounded-md object-cover" data-alt="Mountain landscape video thumbnail" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAkB0EqMSCKq5eWQGK_Z8YolWdg-F7RiT7-Sxvw9OqSaQLeEumvNRbWt4WFQSiLbKnYlfQr1yJQCoHZC50eOekdoaxykxHSPA60dGLJLxqOIjqHV7E8AcpiUeXP58c_IlPcm2C66rlcoy0_UiOgIV7oc6qBzaEUkfdlYKnMdixGax7fdVnd3DvCbMi5_iLUunhXnw5aL6L7ktpp-CvDE2SNHRaUvbnFWCANO_vYgtioVE5GlwTvWERMs0AB1ZtcgRCZ69XSth17beI"/></td>
+<td class="whitespace-nowrap px-3 py-4 text-sm font-medium text-gray-900 dark:text-gray-200">holiday_footage_edit.mov</td>
+<td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500"><span class="material-symbols-outlined text-xl">link</span></td>
+<td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">750 MB</td>
+<td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">05:12</td>
+<td class="whitespace-nowrap px-3 py-4 text-sm"><span class="inline-flex items-center rounded-full bg-yellow-100 dark:bg-yellow-900/50 px-2.5 py-0.5 text-xs font-medium text-yellow-800 dark:text-yellow-300">Processing</span></td>
+<td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">2023-10-25</td>
+<td class="whitespace-nowrap px-3 py-4 text-right text-sm font-medium"><button class="text-gray-500 hover:text-primary"><span class="material-symbols-outlined">more_vert</span></button></td>
+</tr>
+<tr class="hover:bg-gray-50 dark:hover:bg-gray-800/50">
+<td class="p-4"><input class="rounded border-gray-300 text-primary focus:ring-primary" type="checkbox"/></td>
+<td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500"><img class="h-10 w-16 rounded-md object-cover" data-alt="Night sky video thumbnail" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAAALJd7G61keZGQFD9aNhOhcjzz-2lctfDnklg9m7xR-nnczatzxsaoGPRBYWysOWfJoSa-CTgJVKli3EdRuKr6bAEx1RkeO5k-_lhgVIXg91PSEOJqpPgyXCGmm9ERvXc1CA0_FAWJc6HUOCciqY7KIyHxX97WfaYRNyYafK_1GHU5TRTlpTNyq1mWUHt0DV-hU6uzxt6asIxFnOo67Yzw8fYBnfTi2ptmyuA9fkhpHx0PKBAAsKicSwowhtG_LOT67nzeQiZCsE"/></td>
+<td class="whitespace-nowrap px-3 py-4 text-sm font-medium text-gray-900 dark:text-gray-200">b-roll_compilation.avi</td>
+<td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500"><span class="material-symbols-outlined text-xl">upload_file</span></td>
+<td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">2.5 GB</td>
+<td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">25:03</td>
+<td class="whitespace-nowrap px-3 py-4 text-sm"><span class="inline-flex items-center rounded-full bg-red-100 dark:bg-red-900/50 px-2.5 py-0.5 text-xs font-medium text-red-800 dark:text-red-300">Failed</span></td>
+<td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">2023-10-24</td>
+<td class="whitespace-nowrap px-3 py-4 text-right text-sm font-medium"><button class="text-gray-500 hover:text-primary"><span class="material-symbols-outlined">more_vert</span></button></td>
+</tr>
+<tr class="hover:bg-gray-50 dark:hover:bg-gray-800/50">
+<td class="p-4"><input class="rounded border-gray-300 text-primary focus:ring-primary" type="checkbox"/></td>
+<td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500"><img class="h-10 w-16 rounded-md object-cover" data-alt="Swimming pool video thumbnail" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA22azaXoNUVOydIW_FpY3Y-yKJ_-erG3xogJ14HxjLyj9D6PGk9K5Xw995-hCX05wfMOLF4stJKcRYTh_9_VuOqvbJxF4w_Vnj62TxoudSaNvkvac1nSGzx6g-ej78Q0PHHjp1FhBVLjflwAg2lMBYbzhcVauNO1pvmgjw1dymn4aE8VoSSOrGlbmeixeK27Jq5sK2oT1vzNqBr_fEDelv3iQbq8e5in7ZLbKfmhy6NGbwyZVwAaVH-g0y6SMbcJ6oH4SncwTKq7s"/></td>
+<td class="whitespace-nowrap px-3 py-4 text-sm font-medium text-gray-900 dark:text-gray-200">marketing_ad_v2.mkv</td>
+<td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500"><span class="material-symbols-outlined text-xl">upload_file</span></td>
+<td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">450 MB</td>
+<td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">01:15</td>
+<td class="whitespace-nowrap px-3 py-4 text-sm"><span class="inline-flex items-center rounded-full bg-gray-100 dark:bg-gray-700 px-2.5 py-0.5 text-xs font-medium text-gray-800 dark:text-gray-300">Uploaded</span></td>
+<td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">2023-10-23</td>
+<td class="whitespace-nowrap px-3 py-4 text-right text-sm font-medium"><button class="text-gray-500 hover:text-primary"><span class="material-symbols-outlined">more_vert</span></button></td>
+</tr>
+</tbody>
+</table>
+</div>
+<nav aria-label="Pagination" class="flex items-center justify-between border-t border-gray-200 dark:border-gray-700 px-4 py-3 sm:px-6">
+<div class="hidden sm:block">
+<p class="text-sm text-gray-700 dark:text-gray-400">
+                                        Showing <span class="font-medium">1</span> to <span class="font-medium">10</span> of <span class="font-medium">50</span> results
+                                    </p>
+</div>
+<div class="flex flex-1 justify-between sm:justify-end gap-2">
+<button class="relative inline-flex items-center rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-background-dark/50 px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800">Previous</button>
+<button class="relative ml-3 inline-flex items-center rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-background-dark/50 px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800">Next</button>
+</div>
+</nav>
+</div>
+</div>
+<aside class="w-full lg:w-[30%]">
+<div class="bg-white dark:bg-background-dark/50 rounded-xl shadow-sm">
+<div class="pb-3 border-b border-gray-200 dark:border-gray-700 px-4">
+<div class="flex gap-8">
+<a class="flex flex-col items-center justify-center border-b-[3px] border-b-primary text-primary pb-[13px] pt-4" href="#">
+<p class="text-sm font-bold leading-normal tracking-[0.015em]">Upload File</p>
+</a>
+<a class="flex flex-col items-center justify-center border-b-[3px] border-b-transparent text-gray-500 dark:text-gray-400 hover:text-primary pb-[13px] pt-4" href="#">
+<p class="text-sm font-bold leading-normal tracking-[0.015em]">Download URL</p>
+</a>
+</div>
+</div>
+<div class="p-6">
+<div class="flex flex-col items-center gap-6 rounded-lg border-2 border-dashed border-gray-300 dark:border-gray-600 px-6 py-10">
+<span class="material-symbols-outlined text-5xl text-gray-400 dark:text-gray-500">cloud_upload</span>
+<div class="flex flex-col items-center gap-2">
+<p class="text-gray-900 dark:text-white text-lg font-bold leading-tight tracking-[-0.015em] max-w-[480px] text-center">Drag &amp; drop files here</p>
+<p class="text-gray-600 dark:text-gray-400 text-sm font-normal leading-normal max-w-[480px] text-center">or click to browse</p>
+</div>
+<button class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-4 bg-primary text-white text-sm font-bold leading-normal tracking-[0.015em]">
+<span class="truncate">Choose File</span>
+</button>
+<div class="w-full mt-2">
+<div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2.5">
+<div class="bg-primary h-2.5 rounded-full" style="width: 45%"></div>
+</div>
+</div>
+<p class="text-gray-500 dark:text-gray-400 text-xs font-normal leading-normal text-center">Supported formats: MP4, AVI, MOV, MKV</p>
+</div>
+</div>
+<!-- Hidden Download URL Tab Content -->
+<!--
+                            <div class="p-6 hidden">
+                                <div class="flex flex-col gap-4">
+                                     <div>
+                                        <label for="video-url" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Video URL</label>
+                                        <div class="mt-1">
+                                            <input type="url" name="video-url" id="video-url" class="block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-background-dark shadow-sm focus:border-primary focus:ring-primary sm:text-sm" placeholder="https://example.com/video.mp4">
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label for="video-title" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Video Title (Optional)</label>
+                                        <div class="mt-1">
+                                            <input type="text" name="video-title" id="video-title" class="block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-background-dark shadow-sm focus:border-primary focus:ring-primary sm:text-sm" placeholder="My Awesome Video">
+                                        </div>
+                                    </div>
+                                    <button class="flex w-full cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-4 bg-primary text-white text-sm font-bold leading-normal tracking-[0.015em]">
+                                        <span class="truncate">Download</span>
+                                    </button>
+                                </div>
+                            </div>
+                            -->
+</div>
+</aside>
+</div>
+</div>
+</main>
+</div>
+</body></html>

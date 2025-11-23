@@ -6,7 +6,8 @@ FastAPI application entry point.
 from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, FileResponse
+from fastapi.staticfiles import StaticFiles
 import logging
 
 from app.config import get_settings
@@ -75,16 +76,46 @@ app.add_middleware(
 )
 
 
-# Health check endpoint
-@app.get("/", tags=["health"])
-async def root():
-    """Root endpoint - health check."""
-    return {
-        "service": "AdamsAI",
-        "status": "healthy",
-        "version": "1.0.0",
-        "description": "Video Summarization Service"
-    }
+# Mount static files
+app.mount("/js", StaticFiles(directory="frontend/js"), name="js")
+app.mount("/assets", StaticFiles(directory="frontend/assets"), name="assets")
+
+
+# Frontend page routes
+@app.get("/", tags=["frontend"])
+async def serve_dashboard():
+    """Serve dashboard page."""
+    return FileResponse("frontend/pages/index.html")
+
+
+@app.get("/videos-page", tags=["frontend"])
+async def serve_videos_page():
+    """Serve videos management page."""
+    return FileResponse("frontend/pages/videos.html")
+
+
+@app.get("/transcripts-page", tags=["frontend"])
+async def serve_transcripts_page():
+    """Serve transcripts management page."""
+    return FileResponse("frontend/pages/transcripts.html")
+
+
+@app.get("/summaries-page", tags=["frontend"])
+async def serve_summaries_page():
+    """Serve summaries management page."""
+    return FileResponse("frontend/pages/summaries.html")
+
+
+@app.get("/templates-page", tags=["frontend"])
+async def serve_templates_page():
+    """Serve templates management page."""
+    return FileResponse("frontend/pages/templates.html")
+
+
+@app.get("/workflow-page", tags=["frontend"])
+async def serve_workflow_page():
+    """Serve unified workflow page."""
+    return FileResponse("frontend/pages/workflow.html")
 
 
 @app.get("/health", tags=["health"])
