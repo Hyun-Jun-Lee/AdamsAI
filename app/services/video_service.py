@@ -3,6 +3,8 @@ Video service - Business logic for video operations.
 Handles video upload, download, and management.
 """
 
+import logging
+import traceback
 from typing import Dict, Any, Optional
 from sqlalchemy.orm import Session
 from fastapi import UploadFile
@@ -16,6 +18,8 @@ from app.utils.file_utils import save_upload_file, delete_file_safe, ensure_dire
 from app.utils.video_utils import get_video_info
 from app.utils.downloader import download_video_from_url
 from app.utils.validators import is_valid_url, validate_video_file
+
+logger = logging.getLogger(__name__)
 
 # Valid video statuses
 VALID_STATUSES = ["uploaded", "processing", "completed", "failed"]
@@ -39,48 +43,58 @@ async def handle_video_upload(db: Session, file: UploadFile) -> Video:
     Raises:
         ValueError: If file format is invalid or size exceeds limit
     """
-    settings = get_settings()
-
-    # Validate file extension
-    if not validate_video_file(file.filename):
-        raise ValueError(f"Unsupported file format: {file.filename}")
-
-    # Validate file size
-    max_size = settings.max_upload_size_mb * 1024 * 1024  # Convert MB to bytes
-    if hasattr(file, 'size') and file.size and file.size > max_size:
-        raise ValueError(f"File size exceeds maximum allowed size of {settings.max_upload_size_mb}MB")
-
-    # Ensure videos directory exists
-    ensure_directory_exists(settings.videos_dir)
-
-    # Generate unique filename and save uploaded file
-    unique_filename = generate_unique_filename(file.filename)
-    destination = Path(settings.videos_dir) / unique_filename
-    _, file_size = await save_upload_file(file, destination)
-    filepath = str(destination)
-
-    # Extract video metadata
     try:
-        metadata = get_video_info(Path(filepath))
-        if not metadata:
-            raise ValueError("Could not extract video metadata")
+        settings = get_settings()
+
+        # Validate file extension
+        if not validate_video_file(file.filename):
+            logger.error(f"Unsupported file format: {file.filename}")
+            raise ValueError(f"Unsupported file format: {file.filename}")
+
+        # Validate file size
+        max_size = settings.max_upload_size_mb * 1024 * 1024  # Convert MB to bytes
+        if hasattr(file, 'size') and file.size and file.size > max_size:
+            logger.error(f"File size exceeds limit: {file.filename}, size={file.size}")
+            raise ValueError(f"File size exceeds maximum allowed size of {settings.max_upload_size_mb}MB")
+
+        # Ensure videos directory exists
+        ensure_directory_exists(settings.videos_dir)
+
+        # Generate unique filename and save uploaded file
+        unique_filename = generate_unique_filename(file.filename)
+        destination = Path(settings.videos_dir) / unique_filename
+        _, file_size = await save_upload_file(file, destination)
+        filepath = str(destination)
+
+        # Extract video metadata
+        try:
+            metadata = get_video_info(Path(filepath))
+            if not metadata:
+                logger.error(f"Could not extract video metadata for {unique_filename}")
+                raise ValueError("Could not extract video metadata")
+        except Exception as e:
+            # If metadata extraction fails, delete the file and raise error
+            logger.error(f"Failed to extract metadata for {unique_filename}: {str(e)}\n{traceback.format_exc()}")
+            delete_file_safe(Path(filepath))
+            raise ValueError(f"Failed to process video file: {str(e)}")
+
+        # Create video record
+        video_data = VideoCreate(
+            filename=unique_filename,
+            filepath=filepath,
+            source_type="upload",
+            source_url=None,
+            file_size=metadata.get("file_size"),
+            duration=metadata.get("duration"),
+            status="uploaded"
+        )
+
+        return video_repository.create_video(db, video_data)
+    except ValueError:
+        raise
     except Exception as e:
-        # If metadata extraction fails, delete the file and raise error
-        delete_file_safe(Path(filepath))
-        raise ValueError(f"Failed to process video file: {str(e)}")
-
-    # Create video record
-    video_data = VideoCreate(
-        filename=unique_filename,
-        filepath=filepath,
-        source_type="upload",
-        source_url=None,
-        file_size=metadata.get("file_size"),
-        duration=metadata.get("duration"),
-        status="uploaded"
-    )
-
-    return video_repository.create_video(db, video_data)
+        logger.error(f"Unexpected error in handle_video_upload for {file.filename}: {str(e)}\n{traceback.format_exc()}")
+        raise
 
 
 # ============================================================================
@@ -107,37 +121,45 @@ async def handle_video_download(
         ValueError: If URL is invalid
         Exception: If download fails
     """
-    settings = get_settings()
-
-    # Validate URL
-    if not is_valid_url(url):
-        raise ValueError(f"Invalid URL: {url}")
-
-    # Ensure videos directory exists
-    ensure_directory_exists(settings.videos_dir)
-
-    # Download video
     try:
-        download_result = download_video_from_url(
-            url=url,
-            output_dir=str(settings.videos_dir),
-            filename=title
+        settings = get_settings()
+
+        # Validate URL
+        if not is_valid_url(url):
+            logger.error(f"Invalid URL: {url}")
+            raise ValueError(f"Invalid URL: {url}")
+
+        # Ensure videos directory exists
+        ensure_directory_exists(settings.videos_dir)
+
+        # Download video
+        try:
+            download_result = download_video_from_url(
+                url=url,
+                output_dir=str(settings.videos_dir),
+                filename=title
+            )
+        except Exception as e:
+            logger.error(f"Download failed for URL={url}: {str(e)}\n{traceback.format_exc()}")
+            raise Exception(f"Download failed: {str(e)}")
+
+        # Create video record
+        video_data = VideoCreate(
+            filename=download_result["filename"],
+            filepath=download_result["filepath"],
+            source_type="download",
+            source_url=url,
+            file_size=download_result.get("file_size"),
+            duration=download_result.get("duration"),
+            status="uploaded"
         )
+
+        return video_repository.create_video(db, video_data)
+    except ValueError:
+        raise
     except Exception as e:
-        raise Exception(f"Download failed: {str(e)}")
-
-    # Create video record
-    video_data = VideoCreate(
-        filename=download_result["filename"],
-        filepath=download_result["filepath"],
-        source_type="download",
-        source_url=url,
-        file_size=download_result.get("file_size"),
-        duration=download_result.get("duration"),
-        status="uploaded"
-    )
-
-    return video_repository.create_video(db, video_data)
+        logger.error(f"Unexpected error in handle_video_download for URL={url}: {str(e)}\n{traceback.format_exc()}")
+        raise
 
 
 # ============================================================================
@@ -162,18 +184,22 @@ def get_video_list(
     Returns:
         Dict containing total count and video items
     """
-    if status:
-        videos = video_repository.get_videos_by_status(db, status)
-        total = len(videos)
-        items = videos[offset:offset + limit]
-    else:
-        total = video_repository.count_videos(db)
-        items = video_repository.get_videos_paginated(db, skip=offset, limit=limit)
+    try:
+        if status:
+            videos = video_repository.get_videos_by_status(db, status)
+            total = len(videos)
+            items = videos[offset:offset + limit]
+        else:
+            total = video_repository.count_videos(db)
+            items = video_repository.get_videos_paginated(db, skip=offset, limit=limit)
 
-    return {
-        "total": total,
-        "items": items
-    }
+        return {
+            "total": total,
+            "items": items
+        }
+    except Exception as e:
+        logger.error(f"Error in get_video_list (status={status}, limit={limit}, offset={offset}): {str(e)}\n{traceback.format_exc()}")
+        raise
 
 
 def get_video_by_id(db: Session, video_id: int) -> Video:
@@ -190,11 +216,18 @@ def get_video_by_id(db: Session, video_id: int) -> Video:
     Raises:
         ValueError: If video not found
     """
-    video = video_repository.get_video_by_id(db, video_id)
-    if not video:
-        raise ValueError(f"Video not found with id: {video_id}")
+    try:
+        video = video_repository.get_video_by_id(db, video_id)
+        if not video:
+            logger.error(f"Video not found with id: {video_id}")
+            raise ValueError(f"Video not found with id: {video_id}")
 
-    return video
+        return video
+    except ValueError:
+        raise
+    except Exception as e:
+        logger.error(f"Error in get_video_by_id for video_id={video_id}: {str(e)}\n{traceback.format_exc()}")
+        raise
 
 
 # ============================================================================
@@ -216,14 +249,22 @@ def update_video_status(db: Session, video_id: int, status: str) -> Video:
     Raises:
         ValueError: If status is invalid or video not found
     """
-    if status not in VALID_STATUSES:
-        raise ValueError(f"Invalid status: {status}. Must be one of {VALID_STATUSES}")
+    try:
+        if status not in VALID_STATUSES:
+            logger.error(f"Invalid status '{status}' for video_id={video_id}. Must be one of {VALID_STATUSES}")
+            raise ValueError(f"Invalid status: {status}. Must be one of {VALID_STATUSES}")
 
-    video = video_repository.update_video_status(db, video_id, status)
-    if not video:
-        raise ValueError(f"Video not found with id: {video_id}")
+        video = video_repository.update_video_status(db, video_id, status)
+        if not video:
+            logger.error(f"Video not found with id: {video_id}")
+            raise ValueError(f"Video not found with id: {video_id}")
 
-    return video
+        return video
+    except ValueError:
+        raise
+    except Exception as e:
+        logger.error(f"Error in update_video_status for video_id={video_id}, status={status}: {str(e)}\n{traceback.format_exc()}")
+        raise
 
 
 # ============================================================================
@@ -241,19 +282,24 @@ def delete_video(db: Session, video_id: int) -> bool:
     Returns:
         bool: True if deleted, False if not found
     """
-    # Get video to retrieve filepath
-    video = video_repository.get_video_by_id(db, video_id)
-    if not video:
-        return False
-
-    # Delete database record (will CASCADE delete related records)
-    video_repository.delete_video(db, video_id)
-
-    # Delete physical file
     try:
-        delete_file_safe(Path(video.filepath))
-    except Exception:
-        # Log error but don't fail if file deletion fails
-        pass
+        # Get video to retrieve filepath
+        video = video_repository.get_video_by_id(db, video_id)
+        if not video:
+            logger.warning(f"Video not found for deletion: video_id={video_id}")
+            return False
 
-    return True
+        # Delete database record (will CASCADE delete related records)
+        video_repository.delete_video(db, video_id)
+
+        # Delete physical file
+        try:
+            delete_file_safe(Path(video.filepath))
+        except Exception as e:
+            # Log error but don't fail if file deletion fails
+            logger.error(f"Failed to delete video file {video.filepath} for video_id={video_id}: {str(e)}\n{traceback.format_exc()}")
+
+        return True
+    except Exception as e:
+        logger.error(f"Error in delete_video for video_id={video_id}: {str(e)}\n{traceback.format_exc()}")
+        raise
