@@ -3,6 +3,8 @@ STT (Speech-To-Text) service - Business logic for transcription operations.
 Handles audio transcription using OpenAI Whisper API.
 """
 
+import logging
+import traceback
 from typing import Dict, Any, Optional
 from sqlalchemy.orm import Session
 from pathlib import Path
@@ -12,6 +14,8 @@ from app.config import get_settings
 from app.models import Transcript
 from app.schemas import TranscriptCreate
 from app.repositories import transcript_repository, audio_repository
+
+logger = logging.getLogger(__name__)
 
 
 # ============================================================================
@@ -32,30 +36,62 @@ async def call_whisper_api(audio_filepath: str, language: str = "ko") -> str:
     Raises:
         Exception: If API call fails
     """
-    settings = get_settings()
+    try:
+        settings = get_settings()
 
-    # Prepare request
-    url = "https://api.openai.com/v1/audio/transcriptions"
-    headers = {
-        "Authorization": f"Bearer {settings.openai_api_key}"
-    }
-
-    # Open audio file and send request
-    with open(audio_filepath, "rb") as audio_file:
-        files = {
-            "file": audio_file,
-            "model": (None, settings.default_whisper_model),
-            "language": (None, language)
+        # Prepare request
+        url = "https://api.openai.com/v1/audio/transcriptions"
+        headers = {
+            "Authorization": f"Bearer {settings.openai_api_key}"
         }
 
-        async with httpx.AsyncClient(timeout=300.0) as client:
-            response = await client.post(url, headers=headers, files=files)
+        # Open audio file and send request
+        with open(audio_filepath, "rb") as audio_file:
+            files = {
+                "file": (Path(audio_filepath).name, audio_file, "audio/mpeg"),
+            }
+            data = {
+                "model": settings.default_whisper_model,
+                "language": language
+            }
 
-    if response.status_code != 200:
-        raise Exception(f"Whisper API error: {response.status_code} - {response.text}")
+            # Use longer timeout and larger limits for file uploads
+            timeout = httpx.Timeout(
+                connect=30.0,  # Connection timeout
+                read=300.0,    # Read timeout (5 minutes)
+                write=300.0,   # Write timeout (5 minutes)
+                pool=30.0      # Pool timeout
+            )
 
-    result = response.json()
-    return result.get("text", "")
+            limits = httpx.Limits(
+                max_keepalive_connections=5,
+                max_connections=10,
+                keepalive_expiry=30.0
+            )
+
+            async with httpx.AsyncClient(timeout=timeout, limits=limits) as client:
+                response = await client.post(
+                    url,
+                    headers=headers,
+                    files=files,
+                    data=data
+                )
+
+        if response.status_code != 200:
+            logger.error(f"Whisper API error for {audio_filepath}: {response.status_code} - {response.text}")
+            raise Exception(f"Whisper API error: {response.status_code} - {response.text}")
+
+        result = response.json()
+        return result.get("text", "")
+    except httpx.RemoteProtocolError as e:
+        logger.error(f"Connection error in call_whisper_api for {audio_filepath}: {str(e)}\n{traceback.format_exc()}")
+        raise Exception(f"Network connection error during transcription. Please try again. Error: {str(e)}")
+    except httpx.TimeoutException as e:
+        logger.error(f"Timeout error in call_whisper_api for {audio_filepath}: {str(e)}\n{traceback.format_exc()}")
+        raise Exception(f"Transcription timed out. The audio file may be too large. Error: {str(e)}")
+    except Exception as e:
+        logger.error(f"Error in call_whisper_api for {audio_filepath}: {str(e)}\n{traceback.format_exc()}")
+        raise
 
 
 # ============================================================================
@@ -81,34 +117,43 @@ async def handle_transcription(
     Raises:
         ValueError: If audio not found or transcription fails
     """
-    settings = get_settings()
-
-    # Get audio record
-    audio = audio_repository.get_audio_by_id(db, audio_id)
-    if not audio:
-        raise ValueError(f"Audio not found with id: {audio_id}")
-
-    # Call Whisper API
     try:
-        transcribed_text = await call_whisper_api(
-            audio_filepath=audio.filepath,
-            language=language
+        settings = get_settings()
+
+        # Get audio record
+        audio = audio_repository.get_audio_by_id(db, audio_id)
+        if not audio:
+            logger.error(f"Audio not found with id: {audio_id}")
+            raise ValueError(f"Audio not found with id: {audio_id}")
+
+        # Call Whisper API
+        try:
+            transcribed_text = await call_whisper_api(
+                audio_filepath=audio.filepath,
+                language=language
+            )
+        except Exception as e:
+            logger.error(f"Transcription failed for audio_id={audio_id}: {str(e)}\n{traceback.format_exc()}")
+            raise ValueError(f"Transcription failed: {str(e)}")
+
+        if not transcribed_text:
+            logger.error(f"Transcription returned empty text for audio_id={audio_id}")
+            raise ValueError("Transcription returned empty text")
+
+        # Create transcript record
+        transcript_data = TranscriptCreate(
+            audio_id=audio_id,
+            text=transcribed_text,
+            language=language,
+            model=settings.default_whisper_model
         )
+
+        return transcript_repository.create_transcript(db, transcript_data)
+    except ValueError:
+        raise
     except Exception as e:
-        raise ValueError(f"Transcription failed: {str(e)}")
-
-    if not transcribed_text:
-        raise ValueError("Transcription returned empty text")
-
-    # Create transcript record
-    transcript_data = TranscriptCreate(
-        audio_id=audio_id,
-        text=transcribed_text,
-        language=language,
-        model=settings.default_whisper_model
-    )
-
-    return transcript_repository.create_transcript(db, transcript_data)
+        logger.error(f"Unexpected error in handle_transcription for audio_id={audio_id}: {str(e)}\n{traceback.format_exc()}")
+        raise
 
 
 # ============================================================================
@@ -133,18 +178,22 @@ def get_transcript_list(
     Returns:
         Dict containing total count and transcript items
     """
-    if audio_id:
-        transcripts = transcript_repository.get_transcripts_by_audio_id(db, audio_id)
-        total = len(transcripts)
-        items = transcripts[offset:offset + limit]
-    else:
-        total = transcript_repository.count_transcripts(db)
-        items = transcript_repository.get_transcripts_paginated(db, skip=offset, limit=limit)
+    try:
+        if audio_id:
+            transcripts = transcript_repository.get_transcripts_by_audio_id(db, audio_id)
+            total = len(transcripts)
+            items = transcripts[offset:offset + limit]
+        else:
+            total = transcript_repository.count_transcripts(db)
+            items = transcript_repository.get_transcripts_paginated(db, skip=offset, limit=limit)
 
-    return {
-        "total": total,
-        "items": items
-    }
+        return {
+            "total": total,
+            "items": items
+        }
+    except Exception as e:
+        logger.error(f"Error in get_transcript_list (audio_id={audio_id}, limit={limit}, offset={offset}): {str(e)}\n{traceback.format_exc()}")
+        raise
 
 
 def get_transcript_by_id(db: Session, transcript_id: int) -> Transcript:
@@ -161,11 +210,18 @@ def get_transcript_by_id(db: Session, transcript_id: int) -> Transcript:
     Raises:
         ValueError: If transcript not found
     """
-    transcript = transcript_repository.get_transcript_by_id(db, transcript_id)
-    if not transcript:
-        raise ValueError(f"Transcript not found with id: {transcript_id}")
+    try:
+        transcript = transcript_repository.get_transcript_by_id(db, transcript_id)
+        if not transcript:
+            logger.error(f"Transcript not found with id: {transcript_id}")
+            raise ValueError(f"Transcript not found with id: {transcript_id}")
 
-    return transcript
+        return transcript
+    except ValueError:
+        raise
+    except Exception as e:
+        logger.error(f"Error in get_transcript_by_id for transcript_id={transcript_id}: {str(e)}\n{traceback.format_exc()}")
+        raise
 
 
 # ============================================================================
@@ -188,11 +244,15 @@ def search_transcripts(
     Returns:
         Dict containing total count and transcript items
     """
-    transcripts = transcript_repository.search_transcripts_by_text(db, search_query)
-    total = len(transcripts)
-    items = transcripts[:limit]
+    try:
+        transcripts = transcript_repository.search_transcripts_by_text(db, search_query)
+        total = len(transcripts)
+        items = transcripts[:limit]
 
-    return {
-        "total": total,
-        "items": items
-    }
+        return {
+            "total": total,
+            "items": items
+        }
+    except Exception as e:
+        logger.error(f"Error in search_transcripts for query='{search_query}': {str(e)}\n{traceback.format_exc()}")
+        raise
