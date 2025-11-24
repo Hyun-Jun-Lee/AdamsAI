@@ -1,0 +1,137 @@
+{% extends "base.html" %}
+
+{% block title %}AdamsAI - Unified Workflow{% endblock %}
+
+{% block page_scripts %}
+<script type="module" src="/js/workflow.js"></script>
+{% endblock %}
+
+{% block content %}
+<main class="flex flex-1 justify-center py-8 px-4">
+<div class="layout-content-container flex flex-col w-full max-w-[1200px] flex-1">
+<div class="flex flex-wrap justify-between gap-4 p-4">
+<div class="flex min-w-72 flex-col gap-2">
+<p class="text-slate-800 dark:text-slate-100 text-4xl font-black leading-tight tracking-[-0.033em]">Unified Workflow</p>
+<p class="text-slate-500 dark:text-slate-400 text-base font-normal leading-normal">Upload video and get AI summary automatically.</p>
+</div>
+</div>
+<div class="px-4 py-6">
+<div class="flex items-center">
+<div class="flex flex-col items-center relative">
+<div class="flex size-8 shrink-0 items-center justify-center gap-x-2 rounded-full bg-primary text-white">
+<span class="material-symbols-outlined text-lg" style="font-variation-settings: 'FILL' 1;">movie</span>
+</div>
+<p class="text-slate-700 dark:text-slate-300 text-sm font-medium leading-normal mt-2">1. Video</p>
+</div>
+<div class="flex-auto border-t-2 border-primary mx-4"></div>
+<div class="flex flex-col items-center relative">
+<div class="flex size-8 shrink-0 items-center justify-center gap-x-2 rounded-full bg-slate-200 dark:bg-slate-700 text-slate-500 dark:text-slate-400">
+<span class="material-symbols-outlined text-lg">graphic_eq</span>
+</div>
+<p class="text-slate-500 dark:text-slate-400 text-sm font-medium leading-normal mt-2">2. Audio</p>
+</div>
+<div class="flex-auto border-t-2 border-slate-200 dark:border-slate-700 mx-4"></div>
+<div class="flex flex-col items-center relative">
+<div class="flex size-8 shrink-0 items-center justify-center gap-x-2 rounded-full bg-slate-200 dark:bg-slate-700 text-slate-500 dark:text-slate-400">
+<span class="material-symbols-outlined text-lg">subtitles</span>
+</div>
+<p class="text-slate-500 dark:text-slate-400 text-sm font-medium leading-normal mt-2">3. Transcript</p>
+</div>
+<div class="flex-auto border-t-2 border-slate-200 dark:border-slate-700 mx-4"></div>
+<div class="flex flex-col items-center relative">
+<div class="flex size-8 shrink-0 items-center justify-center gap-x-2 rounded-full bg-slate-200 dark:bg-slate-700 text-slate-500 dark:text-slate-400">
+<span class="material-symbols-outlined text-lg">summarize</span>
+</div>
+<p class="text-slate-500 dark:text-slate-400 text-sm font-medium leading-normal mt-2">4. Summary</p>
+</div>
+</div>
+</div>
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-8 p-4 mt-4">
+<div class="lg:col-span-2 bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 p-6">
+<div class="flex flex-col gap-6">
+<div class="flex w-full">
+<div class="flex h-10 w-full items-center justify-center rounded-lg bg-slate-100 dark:bg-slate-800 p-1">
+<label class="flex cursor-pointer h-full grow items-center justify-center overflow-hidden rounded-lg px-2 has-[:checked]:bg-white has-[:checked]:dark:bg-slate-700 has-[:checked]:shadow-[0_1px_3px_rgba(0,0,0,0.1)] has-[:checked]:text-slate-800 has-[:checked]:dark:text-slate-100 text-slate-500 dark:text-slate-400 text-sm font-medium leading-normal">
+<span class="truncate">File Upload</span>
+<input checked="" class="invisible w-0" name="upload-type" type="radio" value="File Upload"/>
+</label>
+<label class="flex cursor-pointer h-full grow items-center justify-center overflow-hidden rounded-lg px-2 has-[:checked]:bg-white has-[:checked]:dark:bg-slate-700 has-[:checked]:shadow-[0_1px_3px_rgba(0,0,0,0.1)] has-[:checked]:text-slate-800 has-[:checked]:dark:text-slate-100 text-slate-500 dark:text-slate-400 text-sm font-medium leading-normal">
+<span class="truncate">URL</span>
+<input class="invisible w-0" name="upload-type" type="radio" value="URL"/>
+</label>
+</div>
+</div>
+<div class="flex flex-col p-4">
+<div class="flex flex-col items-center gap-6 rounded-xl border-2 border-dashed border-slate-300 dark:border-slate-700 px-6 py-14">
+<div class="flex size-14 items-center justify-center rounded-full bg-slate-100 dark:bg-slate-800">
+<span class="material-symbols-outlined text-3xl text-slate-500 dark:text-slate-400">upload_file</span>
+</div>
+<div class="flex max-w-[480px] flex-col items-center gap-2">
+<p class="text-slate-800 dark:text-slate-100 text-lg font-bold leading-tight tracking-[-0.015em] max-w-[480px] text-center">Drag &amp; Drop Your Video Here</p>
+<p class="text-slate-600 dark:text-slate-400 text-sm font-normal leading-normal max-w-[480px] text-center">or browse files on your computer</p>
+</div>
+<button class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-4 bg-slate-200 dark:bg-slate-700 text-slate-800 dark:text-slate-200 text-sm font-bold leading-normal tracking-[0.015em] hover:bg-slate-300 dark:hover:bg-slate-600">
+<span class="truncate">Browse Files</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+<div class="lg:col-span-1 bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 p-6">
+<div class="flex flex-col space-y-6">
+<h3 class="text-lg font-bold text-slate-800 dark:text-slate-100 border-b border-slate-200 dark:border-slate-800 pb-3">Settings</h3>
+<div class="flex flex-col space-y-2">
+<label class="text-sm font-medium text-slate-600 dark:text-slate-400">Transcription Language</label>
+<select class="w-full rounded-lg border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 focus:border-primary focus:ring-primary">
+<option>Auto-detect</option>
+<option>English</option>
+<option>Spanish</option>
+<option>French</option>
+</select>
+</div>
+<div class="flex flex-col space-y-2">
+<label class="text-sm font-medium text-slate-600 dark:text-slate-400">AI Model</label>
+<select class="w-full rounded-lg border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 focus:border-primary focus:ring-primary">
+<option>AdamsAI v3 (Recommended)</option>
+<option>AdamsAI v2</option>
+<option>General Purpose Model</option>
+</select>
+</div>
+<div class="flex flex-col space-y-2">
+<label class="flex items-center justify-between text-sm font-medium text-slate-600 dark:text-slate-400">
+<span>Prompt Template</span>
+<button class="text-slate-500 hover:text-primary dark:text-slate-400 dark:hover:text-primary">
+<span class="material-symbols-outlined text-base">visibility</span>
+</button>
+</label>
+<select class="w-full rounded-lg border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 focus:border-primary focus:ring-primary">
+<option>Default Summary</option>
+<option>Bullet Points</option>
+<option>Key Takeaways</option>
+</select>
+</div>
+<div>
+<details class="group">
+<summary class="flex cursor-pointer items-center justify-between list-none text-sm font-medium text-slate-600 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200">
+                      Advanced Settings
+                      <span class="material-symbols-outlined transition-transform group-open:rotate-180">expand_more</span>
+</summary>
+<div class="mt-4 space-y-4 border-t border-slate-200 dark:border-slate-700 pt-4">
+<p class="text-sm text-slate-500 dark:text-slate-400">Advanced options will be available here.</p>
+</div>
+</details>
+</div>
+</div>
+</div>
+</div>
+<div class="flex justify-end gap-4 p-4 mt-4">
+<button class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-12 px-6 bg-slate-200 dark:bg-slate-700 text-slate-800 dark:text-slate-200 text-base font-bold leading-normal hover:bg-slate-300 dark:hover:bg-slate-600">
+<span class="truncate">Cancel</span>
+</button>
+<button class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-12 px-8 bg-primary text-white text-base font-bold leading-normal hover:bg-blue-600 dark:hover:bg-blue-500 shadow-sm">
+<span class="truncate">Start Processing</span>
+</button>
+</div>
+</div>
+</main>
+{% endblock %}

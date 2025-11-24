@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+
+{% block title %}AdamsAI - Audio Management{% endblock %}
+
+{% block page_scripts %}
+<script type="module" src="/js/audios.js"></script>
+{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto">
+    <!-- PageHeading -->
+    <div class="flex flex-wrap justify-between items-center gap-4 mb-6">
+        <h1 class="text-slate-900 dark:text-white text-4xl font-black leading-tight tracking-[-0.033em]">Audio Files</h1>
+        <button id="extract-audio-btn" class="flex min-w-[84px] cursor-pointer items-center justify-center gap-2 rounded-lg h-10 px-4 bg-primary text-white text-sm font-bold leading-normal tracking-[0.015em] hover:bg-primary/90">
+            <span class="material-symbols-outlined text-base">add_circle</span>
+            <span class="truncate">Extract Audio</span>
+        </button>
+    </div>
+
+    <!-- Audio List -->
+    <div id="audio-list" class="grid grid-cols-1 gap-4">
+        <!-- Audio items will be rendered here -->
+    </div>
+
+    <!-- Empty State -->
+    <div id="empty-state" class="flex flex-col items-center justify-center text-center p-12 bg-white dark:bg-slate-900 rounded-xl border-2 border-dashed border-slate-200 dark:border-slate-800">
+        <span class="material-symbols-outlined text-5xl text-slate-400 dark:text-slate-600 mb-4">graphic_eq</span>
+        <h3 class="text-xl font-semibold text-slate-900 dark:text-white mb-1">No Audio Files</h3>
+        <p class="text-slate-500 dark:text-slate-400 mb-4 max-w-xs">Audio files extracted from videos will appear here.</p>
+    </div>
+</div>
+
+<!-- Video Selection Modal -->
+<div id="video-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+    <div class="bg-white dark:bg-slate-900 rounded-xl shadow-xl max-w-2xl w-full max-h-[80vh] flex flex-col">
+        <!-- Modal Header -->
+        <div class="flex items-center justify-between p-6 border-b border-slate-200 dark:border-slate-800">
+            <h2 class="text-xl font-bold text-slate-900 dark:text-white">Select Video to Extract Audio</h2>
+            <button id="close-modal-btn" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-300">
+                <span class="material-symbols-outlined">close</span>
+            </button>
+        </div>
+
+        <!-- Modal Body -->
+        <div class="flex-1 overflow-y-auto p-6">
+            <!-- Search -->
+            <div class="mb-4">
+                <input
+                    type="text"
+                    id="video-search"
+                    placeholder="Search videos..."
+                    class="w-full px-4 py-2 border border-slate-300 dark:border-slate-700 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-primary"
+                />
+            </div>
+
+            <!-- Video List -->
+            <div id="video-list" class="space-y-2">
+                <!-- Video items will be rendered here -->
+            </div>
+
+            <!-- Loading State -->
+            <div id="video-loading" class="hidden text-center py-8">
+                <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+                <p class="mt-2 text-slate-600 dark:text-slate-400">Loading videos...</p>
+            </div>
+        </div>
+
+        <!-- Modal Footer -->
+        <div class="flex items-center justify-end gap-3 p-6 border-t border-slate-200 dark:border-slate-800">
+            <button id="cancel-modal-btn" class="px-4 py-2 rounded-lg border border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800">
+                Cancel
+            </button>
+        </div>
+    </div>
+</div>
+{% endblock %}

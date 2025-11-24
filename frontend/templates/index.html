@@ -1,0 +1,114 @@
+{% extends "base.html" %}
+
+{% block title %}AdamsAI Dashboard{% endblock %}
+
+{% block page_scripts %}
+<script type="module" src="/js/dashboard.js"></script>
+{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto">
+    <!-- PageHeading & ButtonGroup -->
+    <div class="flex flex-wrap justify-between items-center gap-4 mb-8">
+        <h1 class="text-slate-900 dark:text-white text-3xl font-bold tracking-tight">Dashboard</h1>
+        <div class="flex flex-1 gap-3 flex-wrap justify-start sm:justify-end">
+            <button class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center gap-2 overflow-hidden rounded-lg h-10 px-4 bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200 text-sm font-bold leading-normal tracking-[0.015em] hover:bg-slate-200 dark:hover:bg-slate-700">
+                <span class="material-symbols-outlined text-base">link</span>
+                <span class="truncate">Download from URL</span>
+            </button>
+            <button class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center gap-2 overflow-hidden rounded-lg h-10 px-4 bg-primary text-white text-sm font-bold leading-normal tracking-[0.015em] hover:bg-blue-600">
+                <span class="material-symbols-outlined text-base">upload</span>
+                <span class="truncate">Upload Video</span>
+            </button>
+        </div>
+    </div>
+    <!-- Stats -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <div class="flex flex-col gap-2 rounded-xl p-6 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm">
+            <p class="text-slate-600 dark:text-slate-400 text-base font-medium leading-normal">Total Videos</p>
+            <p class="text-slate-900 dark:text-white tracking-tight text-3xl font-bold leading-tight">1,234</p>
+        </div>
+        <div class="flex flex-col gap-2 rounded-xl p-6 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm">
+            <p class="text-slate-600 dark:text-slate-400 text-base font-medium leading-normal">Processing Tasks</p>
+            <p class="text-slate-900 dark:text-white tracking-tight text-3xl font-bold leading-tight">56</p>
+        </div>
+        <div class="flex flex-col gap-2 rounded-xl p-6 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm">
+            <p class="text-slate-600 dark:text-slate-400 text-base font-medium leading-normal">Completed Summaries</p>
+            <p class="text-slate-900 dark:text-white tracking-tight text-3xl font-bold leading-tight">890</p>
+        </div>
+        <div class="flex flex-col gap-2 rounded-xl p-6 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm">
+            <p class="text-slate-600 dark:text-slate-400 text-base font-medium leading-normal">Active Templates</p>
+            <p class="text-slate-900 dark:text-white tracking-tight text-3xl font-bold leading-tight">12</p>
+        </div>
+    </div>
+    <!-- Recent Videos Table -->
+    <div class="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm">
+        <div class="p-6">
+            <h2 class="text-lg font-semibold text-slate-900 dark:text-white">Recent Videos</h2>
+        </div>
+        <div class="overflow-x-auto">
+            <table class="w-full text-sm text-left">
+                <thead class="text-xs text-slate-500 dark:text-slate-400 uppercase bg-slate-50 dark:bg-slate-800/50">
+                    <tr>
+                        <th class="px-6 py-3 min-w-[250px]" scope="col">Filename</th>
+                        <th class="px-6 py-3" scope="col">Status</th>
+                        <th class="px-6 py-3" scope="col">File Size</th>
+                        <th class="px-6 py-3" scope="col">Duration</th>
+                        <th class="px-6 py-3" scope="col">Created Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="border-b border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800/50">
+                        <td class="px-6 py-4 font-medium text-slate-900 dark:text-white flex items-center gap-4">
+                            <div class="bg-center bg-no-repeat aspect-video bg-cover rounded-lg w-24 h-14" data-alt="Video thumbnail for marketing strategy" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCba7kZ4UuSs_h1sZgCaEu-E9Z0GzYqn23Yw8p_eQlVFdS2jchp9Yot1aQe0ALaaVmeXez2UKHQDTfWFyf4iP8r7NQAHdksrj1M9yhcKPdH_HBeYLxadqx0goplbwHhpy3mH6VO-IumeVaAKqLCL9O-wgZJr2I95AHjXOvnMztvUbH6auQl3eAbcbrKiedOwUo9XiMfpm4zue8oQiQKJJw2kOwtFsmu8oqJGyOEzD0BHBUmwppnDRyGBkwX8zbxEHylh44AdtDqnyk");'></div>
+                            <span class="truncate">2024_Marketing_Strategy.mp4</span>
+                        </td>
+                        <td class="px-6 py-4">
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 dark:bg-green-900/50 text-green-800 dark:text-green-300">Completed</span>
+                        </td>
+                        <td class="px-6 py-4 text-slate-600 dark:text-slate-400">1.2 GB</td>
+                        <td class="px-6 py-4 text-slate-600 dark:text-slate-400">45:12</td>
+                        <td class="px-6 py-4 text-slate-600 dark:text-slate-400">2023-10-26</td>
+                    </tr>
+                    <tr class="border-b border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800/50">
+                        <td class="px-6 py-4 font-medium text-slate-900 dark:text-white flex items-center gap-4">
+                            <div class="bg-center bg-no-repeat aspect-video bg-cover rounded-lg w-24 h-14" data-alt="Video thumbnail for Q3 earnings call" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCIMq6H8iFcUfTvUu_o-2pNz0vsp_ftPCode9TQL2vvWVEZTOqfkrmU-fQ9yAoCSA9wHSRmHnJUhArKFpVCs-ev72AMZ4FlgU_RLLa0ankQbmMWee0-dsruf94elT3nzvQBEcrHwROIWJZOxMRSB_kR_hwz6lSU299wgOI5QznI4ULtYMNSE20hZ3aIX-t4WxIYKXpRolfqK5D47ijzeHaA50Gg3c8Q5HF9iiYcqDMI09ndL23J-5LayPWGnnkjRYCj1VJtQVKYmaw");'></div>
+                            <span class="truncate">Q3_Earnings_Call_Final.mov</span>
+                        </td>
+                        <td class="px-6 py-4">
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 dark:bg-yellow-900/50 text-yellow-800 dark:text-yellow-300">Processing</span>
+                        </td>
+                        <td class="px-6 py-4 text-slate-600 dark:text-slate-400">850 MB</td>
+                        <td class="px-6 py-4 text-slate-600 dark:text-slate-400">1:12:30</td>
+                        <td class="px-6 py-4 text-slate-600 dark:text-slate-400">2023-10-25</td>
+                    </tr>
+                    <tr class="border-b border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800/50">
+                        <td class="px-6 py-4 font-medium text-slate-900 dark:text-white flex items-center gap-4">
+                            <div class="bg-center bg-no-repeat aspect-video bg-cover rounded-lg w-24 h-14" data-alt="Video thumbnail for product demo" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuAdgIaWQg04sG1YZaZPEoSDX3gk4QA8GSNKJlRD634Y0ITEzmatV_MBbMH2iJ9M3Qe4R7WYxzSH8QXPQ7B3Zz19Lu3kawl4lUl86gSJqa-1fUm8kaEEXwh9mBPSz5UTxQGqryA_adUY8LEfDoWKmuPppP9rqeC3mVSx8SSUin-6kBHDdYQJuAqm4LAjwPFIEE4vqW8uxng01Ml68nEyLOxTeAXLvzNiWV2PGLgajXSloi10vQNoZgu1FlymVYrWJW_khLOo43cBYC8");'></div>
+                            <span class="truncate">Product_Demo_v2_unsupported.avi</span>
+                        </td>
+                        <td class="px-6 py-4">
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 dark:bg-red-900/50 text-red-800 dark:text-red-300">Failed</span>
+                        </td>
+                        <td class="px-6 py-4 text-slate-600 dark:text-slate-400">50 MB</td>
+                        <td class="px-6 py-4 text-slate-600 dark:text-slate-400">02:30</td>
+                        <td class="px-6 py-4 text-slate-600 dark:text-slate-400">2023-10-24</td>
+                    </tr>
+                    <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/50">
+                        <td class="px-6 py-4 font-medium text-slate-900 dark:text-white flex items-center gap-4">
+                            <div class="bg-center bg-no-repeat aspect-video bg-cover rounded-lg w-24 h-14" data-alt="Video thumbnail for new employee onboarding" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDRAQjGVpbCpKHQwqbkhLBNwWQcUOmaNkRIxJR_dhRwKYZeBk-45r6ZskDVmV85Ow2eG_2y41PHFKxhCGIEfu7WN4r2F28NvmQ6aCz1SHdFuvPz4-wPo2zHhelDwSZOf8n76S-wX-f6_bkF2KuRIGiHS5py5jkKu7M9Wx3R-cMvKzwaNSk_eBXv9cHQFjqhaYhdiDolv1RnVDq-pOI3dLnA0neO3wRUnZdGH9YiaRLujNSR_tseNUNeAHHNkVb5D7kyBVu3-KqqA-8");'></div>
+                            <span class="truncate">New_Employee_Onboarding.mp4</span>
+                        </td>
+                        <td class="px-6 py-4">
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-100 dark:bg-slate-700 text-slate-800 dark:text-slate-300">Uploaded</span>
+                        </td>
+                        <td class="px-6 py-4 text-slate-600 dark:text-slate-400">2.5 GB</td>
+                        <td class="px-6 py-4 text-slate-600 dark:text-slate-400">32:05</td>
+                        <td class="px-6 py-4 text-slate-600 dark:text-slate-400">2023-10-23</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -4,10 +4,11 @@ FastAPI application entry point.
 """
 
 from contextlib import asynccontextmanager
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse, FileResponse
+from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
+from fastapi.templating import Jinja2Templates
 import logging
 
 from app.config import get_settings
@@ -80,42 +81,51 @@ app.add_middleware(
 app.mount("/js", StaticFiles(directory="frontend/js"), name="js")
 app.mount("/assets", StaticFiles(directory="frontend/assets"), name="assets")
 
+# Configure Jinja2 templates
+templates = Jinja2Templates(directory="frontend/templates")
+
 
 # Frontend page routes
 @app.get("/", tags=["frontend"])
-async def serve_dashboard():
+async def serve_dashboard(request: Request):
     """Serve dashboard page."""
-    return FileResponse("frontend/pages/index.html")
+    return templates.TemplateResponse("index.html", {"request": request, "page": "dashboard"})
 
 
 @app.get("/videos-page", tags=["frontend"])
-async def serve_videos_page():
+async def serve_videos_page(request: Request):
     """Serve videos management page."""
-    return FileResponse("frontend/pages/videos.html")
+    return templates.TemplateResponse("videos.html", {"request": request, "page": "videos"})
+
+
+@app.get("/audios-page", tags=["frontend"])
+async def serve_audios_page(request: Request):
+    """Serve audios management page."""
+    return templates.TemplateResponse("audios.html", {"request": request, "page": "audios"})
 
 
 @app.get("/transcripts-page", tags=["frontend"])
-async def serve_transcripts_page():
+async def serve_transcripts_page(request: Request):
     """Serve transcripts management page."""
-    return FileResponse("frontend/pages/transcripts.html")
+    return templates.TemplateResponse("transcripts.html", {"request": request, "page": "transcripts"})
 
 
 @app.get("/summaries-page", tags=["frontend"])
-async def serve_summaries_page():
+async def serve_summaries_page(request: Request):
     """Serve summaries management page."""
-    return FileResponse("frontend/pages/summaries.html")
+    return templates.TemplateResponse("summaries.html", {"request": request, "page": "summaries"})
 
 
 @app.get("/templates-page", tags=["frontend"])
-async def serve_templates_page():
+async def serve_templates_page(request: Request):
     """Serve templates management page."""
-    return FileResponse("frontend/pages/templates.html")
+    return templates.TemplateResponse("templates.html", {"request": request, "page": "templates"})
 
 
 @app.get("/workflow-page", tags=["frontend"])
-async def serve_workflow_page():
+async def serve_workflow_page(request: Request):
     """Serve unified workflow page."""
-    return FileResponse("frontend/pages/workflow.html")
+    return templates.TemplateResponse("workflow.html", {"request": request, "page": "workflow"})
 
 
 @app.get("/health", tags=["health"])
