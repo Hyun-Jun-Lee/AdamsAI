@@ -27,14 +27,16 @@ function init() {
     elements = {
         // Search and filters
         searchInput: document.querySelector('input[placeholder="Search summaries..."]'),
-        modelFilter: document.querySelector('select:has(option:contains("All Models"))') || document.querySelectorAll('select')[0],
-        sortFilter: document.querySelector('select:has(option:contains("Sort"))') || document.querySelectorAll('select')[1],
+        modelFilter: document.querySelectorAll('select')[0],
+        sortFilter: document.querySelectorAll('select')[1],
 
         // Summary grid
-        summaryGrid: document.querySelector('.grid.grid-cols-1.lg\\:grid-cols-2'),
+        summaryGrid: document.querySelector('.grid.grid-cols-1'),
 
         // Generate button
-        generateButton: document.querySelector('button:has(span:contains("Generate Summary"))'),
+        generateButton: Array.from(document.querySelectorAll('button')).find(btn =>
+            btn.textContent.includes('Generate Summary')
+        ),
     };
 
     // Setup event listeners

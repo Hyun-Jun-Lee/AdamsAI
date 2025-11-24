@@ -27,9 +27,13 @@ let elements = {};
 function init() {
     // Get DOM elements
     elements = {
-        // Action buttons
-        uploadButton: document.querySelector('button:has(span:contains("Upload Video"))'),
-        downloadUrlButton: document.querySelector('button:has(span:contains("Download from URL"))'),
+        // Action buttons - find by text content
+        uploadButton: Array.from(document.querySelectorAll('button')).find(btn =>
+            btn.textContent.includes('Upload Video')
+        ),
+        downloadUrlButton: Array.from(document.querySelectorAll('button')).find(btn =>
+            btn.textContent.includes('Download from URL')
+        ),
 
         // Stats cards
         totalVideosCard: document.querySelectorAll('.text-3xl.font-bold')[0],

@@ -39,17 +39,26 @@ function init() {
 
         // Pagination
         paginationInfo: document.querySelector('.text-sm.text-gray-700'),
-        prevButton: document.querySelector('button:has-text("Previous")') || document.querySelectorAll('nav button')[0],
-        nextButton: document.querySelector('button:has-text("Next")') || document.querySelectorAll('nav button')[1],
+        prevButton: Array.from(document.querySelectorAll('nav button')).find(btn =>
+            btn.textContent.includes('Previous')
+        ) || document.querySelectorAll('nav button')[0],
+        nextButton: Array.from(document.querySelectorAll('nav button')).find(btn =>
+            btn.textContent.includes('Next')
+        ) || document.querySelectorAll('nav button')[1],
 
         // Upload tabs
-        fileUploadTab: document.querySelector('a:contains("Upload File")') || document.querySelectorAll('aside .flex.gap-8 a')[0],
-        urlUploadTab: document.querySelectorAll('aside .flex.gap-8 a')[1],
+        fileUploadTab: document.getElementById('file-upload-tab'),
+        urlUploadTab: document.getElementById('url-upload-tab'),
+
+        // Upload container
+        uploadContainer: document.getElementById('upload-container'),
 
         // Upload area (file)
         uploadArea: document.querySelector('.border-dashed'),
-        chooseFileButton: document.querySelector('button:has(.truncate:contains("Choose File"))'),
-        progressBar: document.querySelector('.bg-primary.h-2\\.5'),
+        chooseFileButton: Array.from(document.querySelectorAll('button')).find(btn =>
+            btn.textContent.includes('Choose File')
+        ),
+        progressBar: document.querySelector('.bg-primary'),
         progressContainer: document.querySelector('.w-full.bg-gray-200'),
         fileInput: null, // Will create dynamically
     };
@@ -387,7 +396,48 @@ function switchToFileUpload() {
     elements.urlUploadTab?.classList.remove('border-b-primary', 'text-primary');
     elements.urlUploadTab?.classList.add('border-b-transparent', 'text-gray-500', 'dark:text-gray-400');
 
-    // Show file upload UI (already default in HTML)
+    // Restore file upload UI
+    if (!elements.uploadContainer) return;
+
+    elements.uploadContainer.innerHTML = `
+        <div class="flex flex-col items-center gap-6 rounded-lg border-2 border-dashed border-gray-300 dark:border-gray-600 px-6 py-10">
+            <span class="material-symbols-outlined text-5xl text-gray-400 dark:text-gray-500">cloud_upload</span>
+            <div class="flex flex-col items-center gap-2">
+                <p class="text-gray-900 dark:text-white text-lg font-bold leading-tight tracking-[-0.015em] max-w-[480px] text-center">Drag & drop files here</p>
+                <p class="text-gray-600 dark:text-gray-400 text-sm font-normal leading-normal max-w-[480px] text-center">or click to browse</p>
+            </div>
+            <button class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-4 bg-primary text-white text-sm font-bold leading-normal tracking-[0.015em]">
+                <span class="truncate">Choose File</span>
+            </button>
+            <div class="w-full mt-2" style="display: none;">
+                <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2.5">
+                    <div class="bg-primary h-2.5 rounded-full" style="width: 0%"></div>
+                </div>
+            </div>
+            <p class="text-gray-500 dark:text-gray-400 text-xs font-normal leading-normal text-center">Supported formats: MP4, AVI, MOV, MKV</p>
+        </div>
+    `;
+
+    // Re-attach event listeners for file upload
+    elements.uploadArea = document.querySelector('.border-dashed');
+    elements.chooseFileButton = Array.from(document.querySelectorAll('button')).find(btn =>
+        btn.textContent.includes('Choose File')
+    );
+    elements.progressBar = document.querySelector('.bg-primary');
+    elements.progressContainer = document.querySelector('.w-full.bg-gray-200');
+
+    elements.chooseFileButton?.addEventListener('click', () => {
+        elements.fileInput.click();
+    });
+
+    elements.uploadArea?.addEventListener('dragover', handleDragOver);
+    elements.uploadArea?.addEventListener('dragleave', handleDragLeave);
+    elements.uploadArea?.addEventListener('drop', handleDrop);
+    elements.uploadArea?.addEventListener('click', (e) => {
+        if (state.uploadType === 'file' && e.target !== elements.chooseFileButton) {
+            elements.fileInput.click();
+        }
+    });
 }
 
 /**
@@ -403,21 +453,20 @@ function switchToUrlUpload() {
     elements.fileUploadTab?.classList.add('border-b-transparent', 'text-gray-500', 'dark:text-gray-400');
 
     // Replace upload area with URL input
-    const uploadContainer = document.querySelector('aside .p-6');
-    if (!uploadContainer) return;
+    if (!elements.uploadContainer) return;
 
-    uploadContainer.innerHTML = `
+    elements.uploadContainer.innerHTML = `
         <div class="flex flex-col gap-4">
             <div>
                 <label for="video-url" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Video URL</label>
                 <input
                     type="url"
                     id="video-url"
-                    class="block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-background-dark shadow-sm focus:border-primary focus:ring-primary sm:text-sm"
-                    placeholder="https://example.com/video.mp4"
+                    class="block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-background-dark shadow-sm focus:border-primary focus:ring-primary sm:text-sm p-2"
+                    placeholder="https://example.com/video.mp4 or YouTube URL"
                 />
             </div>
-            <button id="download-url-btn" class="flex w-full cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-4 bg-primary text-white text-sm font-bold leading-normal tracking-[0.015em]">
+            <button id="download-url-btn" class="flex w-full cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-4 bg-primary text-white text-sm font-bold leading-normal tracking-[0.015em] hover:bg-primary/90">
                 <span class="truncate">Download</span>
             </button>
             <p class="text-gray-500 dark:text-gray-400 text-xs font-normal leading-normal text-center">Supports YouTube, Vimeo, and direct video URLs</p>

@@ -3,7 +3,7 @@
  * Handles all REST API communication with the backend
  */
 
-const API_BASE_URL = '/api/v1';
+const API_BASE_URL = '/api';
 
 /**
  * Base fetch wrapper with error handling
@@ -47,11 +47,13 @@ export const videoAPI = {
     async getAll(params = {}) {
         const queryParams = new URLSearchParams();
         if (params.status) queryParams.append('status', params.status);
-        if (params.skip !== undefined) queryParams.append('skip', params.skip);
-        if (params.limit !== undefined) queryParams.append('limit', params.limit);
+        if (params.offset !== undefined) queryParams.append('offset', params.offset);
+        if (params.limit !== undefined) queryParams.append('limit', params.limit || 100);
 
         const query = queryParams.toString();
-        return apiFetch(`/videos${query ? '?' + query : ''}`);
+        const result = await apiFetch(`/videos${query ? '?' + query : ''}`);
+        // Backend returns { total, items }, return items array
+        return result.items || [];
     },
 
     /**
@@ -123,11 +125,12 @@ export const audioAPI = {
      */
     async getAll(params = {}) {
         const queryParams = new URLSearchParams();
-        if (params.skip !== undefined) queryParams.append('skip', params.skip);
-        if (params.limit !== undefined) queryParams.append('limit', params.limit);
+        if (params.offset !== undefined) queryParams.append('offset', params.offset);
+        if (params.limit !== undefined) queryParams.append('limit', params.limit || 100);
 
         const query = queryParams.toString();
-        return apiFetch(`/audios${query ? '?' + query : ''}`);
+        const result = await apiFetch(`/audios${query ? '?' + query : ''}`);
+        return result.items || [];
     },
 
     /**
@@ -141,8 +144,9 @@ export const audioAPI = {
      * Extract audio from video
      */
     async extractFromVideo(videoId) {
-        return apiFetch(`/audios/extract/${videoId}`, {
+        return apiFetch('/audios/extract', {
             method: 'POST',
+            body: JSON.stringify({ video_id: videoId }),
         });
     },
 
@@ -166,11 +170,12 @@ export const transcriptAPI = {
     async getAll(params = {}) {
         const queryParams = new URLSearchParams();
         if (params.language) queryParams.append('language', params.language);
-        if (params.skip !== undefined) queryParams.append('skip', params.skip);
-        if (params.limit !== undefined) queryParams.append('limit', params.limit);
+        if (params.offset !== undefined) queryParams.append('offset', params.offset);
+        if (params.limit !== undefined) queryParams.append('limit', params.limit || 100);
 
         const query = queryParams.toString();
-        return apiFetch(`/transcripts${query ? '?' + query : ''}`);
+        const result = await apiFetch(`/transcripts${query ? '?' + query : ''}`);
+        return result.items || [];
     },
 
     /**
@@ -183,8 +188,8 @@ export const transcriptAPI = {
     /**
      * Create transcript from audio
      */
-    async create(audioId, language = 'auto') {
-        return apiFetch('/transcripts/', {
+    async create(audioId, language = 'ko') {
+        return apiFetch('/transcripts/create', {
             method: 'POST',
             body: JSON.stringify({ audio_id: audioId, language }),
         });
@@ -210,11 +215,12 @@ export const summaryAPI = {
     async getAll(params = {}) {
         const queryParams = new URLSearchParams();
         if (params.ai_model) queryParams.append('ai_model', params.ai_model);
-        if (params.skip !== undefined) queryParams.append('skip', params.skip);
-        if (params.limit !== undefined) queryParams.append('limit', params.limit);
+        if (params.offset !== undefined) queryParams.append('offset', params.offset);
+        if (params.limit !== undefined) queryParams.append('limit', params.limit || 100);
 
         const query = queryParams.toString();
-        return apiFetch(`/summaries${query ? '?' + query : ''}`);
+        const result = await apiFetch(`/summaries${query ? '?' + query : ''}`);
+        return result.items || [];
     },
 
     /**
@@ -265,12 +271,19 @@ export const templateAPI = {
      */
     async getAll(params = {}) {
         const queryParams = new URLSearchParams();
-        if (params.is_active !== undefined) queryParams.append('is_active', params.is_active);
-        if (params.skip !== undefined) queryParams.append('skip', params.skip);
-        if (params.limit !== undefined) queryParams.append('limit', params.limit);
+        // Don't send is_active parameter for now, filter client-side
+        if (params.offset !== undefined) queryParams.append('offset', params.offset);
+        if (params.limit !== undefined) queryParams.append('limit', params.limit || 100);
 
         const query = queryParams.toString();
-        return apiFetch(`/summaries/templates${query ? '?' + query : ''}`);
+        const result = await apiFetch(`/summaries/templates${query ? '?' + query : ''}`);
+        const items = result.items || [];
+
+        // Filter by is_active if specified
+        if (params.is_active !== undefined) {
+            return items.filter(t => t.is_active === params.is_active);
+        }
+        return items;
     },
 
     /**

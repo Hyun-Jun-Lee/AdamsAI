@@ -29,14 +29,20 @@ function init() {
         searchInput: document.querySelector('input[placeholder="Search in transcripts..."]'),
 
         // Filters
-        languageFilterButton: document.querySelector('button:has(p:contains("Language"))'),
-        dateRangeFilterButton: document.querySelector('button:has(p:contains("Date Range"))'),
+        languageFilterButton: Array.from(document.querySelectorAll('button')).find(btn =>
+            btn.textContent.includes('Language')
+        ),
+        dateRangeFilterButton: Array.from(document.querySelectorAll('button')).find(btn =>
+            btn.textContent.includes('Date Range')
+        ),
 
         // Transcript grid
         transcriptGrid: document.querySelector('.grid.grid-cols-1'),
 
         // Create button
-        createButton: document.querySelector('button:has(span:contains("Create Transcript"))'),
+        createButton: Array.from(document.querySelectorAll('button')).find(btn =>
+            btn.textContent.includes('Create Transcript')
+        ),
     };
 
     // Setup event listeners
@@ -289,91 +295,218 @@ function viewTranscript(transcriptId) {
 }
 
 /**
- * Show create transcript modal
+ * Show create transcript modal - Audio Selection
  */
-function showCreateTranscriptModal() {
+async function showCreateTranscriptModal() {
     const modal = document.createElement('div');
     modal.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4';
     modal.innerHTML = `
-        <div class="bg-white dark:bg-surface-dark rounded-xl max-w-md w-full p-6">
-            <div class="flex justify-between items-start mb-6">
-                <h3 class="text-xl font-bold text-text-primary-light dark:text-text-primary-dark">Create Transcript</h3>
+        <div class="bg-white dark:bg-surface-dark rounded-xl max-w-2xl w-full">
+            <div class="flex justify-between items-start p-6 border-b border-border-light dark:border-border-dark">
+                <div>
+                    <h3 class="text-xl font-bold text-text-primary-light dark:text-text-primary-dark">Create Transcript</h3>
+                    <p class="text-sm text-text-secondary-light dark:text-text-secondary-dark mt-1">Select an audio file to transcribe</p>
+                </div>
                 <button class="close-btn text-text-secondary-light dark:text-text-secondary-dark hover:text-primary">
                     <span class="material-symbols-outlined">close</span>
                 </button>
             </div>
 
-            <div class="space-y-4">
-                <div>
-                    <label class="block text-sm font-medium text-text-primary-light dark:text-text-primary-dark mb-2">Audio ID</label>
-                    <input
-                        type="number"
-                        id="audio-id-input"
-                        class="w-full rounded-lg border border-border-light dark:border-border-dark bg-surface-light dark:bg-surface-dark text-text-primary-light dark:text-text-primary-dark p-2 focus:border-primary focus:ring-primary"
-                        placeholder="Enter audio ID"
-                    />
-                </div>
-
+            <div class="p-6 space-y-4">
+                <!-- Language Selection -->
                 <div>
                     <label class="block text-sm font-medium text-text-primary-light dark:text-text-primary-dark mb-2">Language</label>
                     <select
                         id="language-select"
                         class="w-full rounded-lg border border-border-light dark:border-border-dark bg-surface-light dark:bg-surface-dark text-text-primary-light dark:text-text-primary-dark p-2 focus:border-primary focus:ring-primary"
                     >
-                        <option value="auto">Auto-detect</option>
-                        <option value="english">English</option>
-                        <option value="korean">Korean</option>
-                        <option value="spanish">Spanish</option>
-                        <option value="french">French</option>
+                        <option value="ko">Korean</option>
+                        <option value="en">English</option>
+                        <option value="es">Spanish</option>
+                        <option value="fr">French</option>
+                        <option value="ja">Japanese</option>
+                        <option value="zh">Chinese</option>
                     </select>
                 </div>
 
-                <div class="flex justify-end gap-3 mt-6">
-                    <button class="cancel-btn px-4 py-2 bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark text-text-primary-light dark:text-text-primary-dark rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800">
-                        Cancel
-                    </button>
-                    <button class="create-btn px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90">
-                        Create
-                    </button>
+                <!-- Search Bar -->
+                <div>
+                    <label class="block text-sm font-medium text-text-primary-light dark:text-text-primary-dark mb-2">Search Audio Files</label>
+                    <input
+                        type="text"
+                        id="audio-search"
+                        class="w-full rounded-lg border border-border-light dark:border-border-dark bg-surface-light dark:bg-surface-dark text-text-primary-light dark:text-text-primary-dark p-2 focus:border-primary focus:ring-primary"
+                        placeholder="Search by filename..."
+                    />
+                </div>
+
+                <!-- Audio List -->
+                <div class="border border-border-light dark:border-border-dark rounded-lg overflow-hidden">
+                    <div id="audio-list-container" class="max-h-96 overflow-y-auto">
+                        <div class="flex items-center justify-center p-8">
+                            <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     `;
 
+    document.body.appendChild(modal);
+
     // Event listeners
     modal.querySelector('.close-btn')?.addEventListener('click', () => modal.remove());
-    modal.querySelector('.cancel-btn')?.addEventListener('click', () => modal.remove());
-    modal.querySelector('.create-btn')?.addEventListener('click', async () => {
-        const audioId = parseInt(document.getElementById('audio-id-input')?.value);
-        const language = document.getElementById('language-select')?.value || 'auto';
-
-        if (!audioId || isNaN(audioId)) {
-            showToast('Please enter a valid audio ID', 'error');
-            return;
-        }
-
-        try {
-            showLoading('Creating transcript...');
-            modal.remove();
-            const transcript = await transcriptAPI.create(audioId, language);
-            showToast('Transcript created successfully', 'success');
-
-            // Add to state and re-render
-            state.transcripts.unshift(transcript);
-            filterTranscripts();
-        } catch (error) {
-            console.error('Failed to create transcript:', error);
-            showToast(error.message || 'Failed to create transcript', 'error');
-        } finally {
-            hideLoading();
-        }
-    });
-
     modal.addEventListener('click', (e) => {
         if (e.target === modal) modal.remove();
     });
 
-    document.body.appendChild(modal);
+    // Load audios
+    await loadAudiosForSelection(modal);
+}
+
+/**
+ * Load audios for selection modal
+ */
+async function loadAudiosForSelection(modal) {
+    const container = modal.querySelector('#audio-list-container');
+    const searchInput = modal.querySelector('#audio-search');
+    const languageSelect = modal.querySelector('#language-select');
+
+    try {
+        const response = await audioAPI.getAll();
+        const audios = response.items || response;
+
+        if (!audios || audios.length === 0) {
+            container.innerHTML = `
+                <div class="flex flex-col items-center justify-center p-8 text-center">
+                    <span class="material-symbols-outlined text-5xl text-text-secondary-light dark:text-text-secondary-dark mb-2">music_off</span>
+                    <p class="text-text-secondary-light dark:text-text-secondary-dark">No audio files available</p>
+                    <p class="text-sm text-text-secondary-light dark:text-text-secondary-dark mt-1">Please extract audio from a video first</p>
+                </div>
+            `;
+            return;
+        }
+
+        // Render audio list
+        const renderAudios = (filteredAudios) => {
+            if (filteredAudios.length === 0) {
+                container.innerHTML = `
+                    <div class="flex flex-col items-center justify-center p-8">
+                        <p class="text-text-secondary-light dark:text-text-secondary-dark">No matching audio files found</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = filteredAudios.map(audio => `
+                <div class="audio-item flex items-center justify-between p-4 border-b border-border-light dark:border-border-dark hover:bg-surface-light dark:hover:bg-gray-800 cursor-pointer transition-colors"
+                     data-audio-id="${audio.id}">
+                    <div class="flex items-center gap-3 flex-1">
+                        <span class="material-symbols-outlined text-primary">audio_file</span>
+                        <div class="flex-1 min-w-0">
+                            <p class="text-sm font-medium text-text-primary-light dark:text-text-primary-dark truncate">${audio.filename}</p>
+                            <div class="flex items-center gap-2 mt-1">
+                                <span class="text-xs text-text-secondary-light dark:text-text-secondary-dark">${formatFileSize(audio.file_size)}</span>
+                                <span class="text-xs text-text-secondary-light dark:text-text-secondary-dark">•</span>
+                                <span class="text-xs text-text-secondary-light dark:text-text-secondary-dark">${formatDuration(audio.duration)}</span>
+                                <span class="text-xs text-text-secondary-light dark:text-text-secondary-dark">•</span>
+                                <span class="text-xs px-2 py-0.5 rounded-full bg-green-100 text-green-800">${audio.status}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <button class="select-audio-btn flex items-center gap-1 px-3 py-1.5 bg-primary/10 text-primary text-sm font-medium rounded-lg hover:bg-primary/20 transition-colors"
+                            data-audio-id="${audio.id}">
+                        <span class="material-symbols-outlined text-sm">check_circle</span>
+                        <span>Select</span>
+                    </button>
+                </div>
+            `).join('');
+
+            // Attach select event listeners
+            container.querySelectorAll('.select-audio-btn').forEach(btn => {
+                btn.addEventListener('click', async (e) => {
+                    e.stopPropagation();
+                    const audioId = parseInt(btn.dataset.audioId);
+                    const language = languageSelect.value;
+                    await handleAudioSelection(audioId, language, modal);
+                });
+            });
+
+            // Click on row to select
+            container.querySelectorAll('.audio-item').forEach(item => {
+                item.addEventListener('click', async (e) => {
+                    if (e.target.closest('.select-audio-btn')) return;
+                    const audioId = parseInt(item.dataset.audioId);
+                    const language = languageSelect.value;
+                    await handleAudioSelection(audioId, language, modal);
+                });
+            });
+        };
+
+        // Initial render
+        renderAudios(audios);
+
+        // Search functionality
+        searchInput?.addEventListener('input', debounce((e) => {
+            const query = e.target.value.toLowerCase();
+            const filtered = audios.filter(audio =>
+                audio.filename.toLowerCase().includes(query)
+            );
+            renderAudios(filtered);
+        }, 300));
+
+    } catch (error) {
+        console.error('Failed to load audios:', error);
+        container.innerHTML = `
+            <div class="flex flex-col items-center justify-center p-8 text-center">
+                <span class="material-symbols-outlined text-5xl text-red-500 mb-2">error</span>
+                <p class="text-text-secondary-light dark:text-text-secondary-dark">Failed to load audio files</p>
+            </div>
+        `;
+    }
+}
+
+/**
+ * Handle audio selection for transcription
+ */
+async function handleAudioSelection(audioId, language, modal) {
+    try {
+        showLoading('Creating transcript...');
+        modal.remove();
+
+        const transcript = await transcriptAPI.create(audioId, language);
+        showToast('Transcript created successfully!', 'success');
+
+        // Add to state and re-render
+        state.transcripts.unshift(transcript);
+        filterTranscripts();
+    } catch (error) {
+        console.error('Failed to create transcript:', error);
+        showToast(error.message || 'Failed to create transcript', 'error');
+    } finally {
+        hideLoading();
+    }
+}
+
+/**
+ * Format file size helper
+ */
+function formatFileSize(bytes) {
+    if (!bytes || bytes === 0) return '0 B';
+    const k = 1024;
+    const sizes = ['B', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return Math.round((bytes / Math.pow(k, i)) * 100) / 100 + ' ' + sizes[i];
+}
+
+/**
+ * Format duration helper
+ */
+function formatDuration(seconds) {
+    if (!seconds || seconds === 0) return '0:00';
+    const mins = Math.floor(seconds / 60);
+    const secs = Math.floor(seconds % 60);
+    return `${mins}:${secs.toString().padStart(2, '0')}`;
 }
 
 /**

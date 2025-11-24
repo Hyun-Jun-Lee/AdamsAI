@@ -41,18 +41,27 @@ function init() {
 
         // Upload area
         uploadArea: document.querySelector('.border-dashed'),
-        browseButton: document.querySelector('button:has(.truncate)'),
+        browseButton: Array.from(document.querySelectorAll('button')).find(btn =>
+            btn.textContent.includes('Browse Files')
+        ),
         fileInput: null, // Will create dynamically
 
         // Settings
-        languageSelect: document.querySelector('select:has(option:contains("Auto-detect"))') || document.querySelectorAll('select')[0],
+        languageSelect: document.querySelectorAll('select')[0],
         aiModelSelect: document.querySelectorAll('select')[1],
         templateSelect: document.querySelectorAll('select')[2],
-        templateViewButton: document.querySelector('button:has(.material-symbols-outlined:contains("visibility"))'),
+        templateViewButton: Array.from(document.querySelectorAll('button')).find(btn => {
+            const icon = btn.querySelector('.material-symbols-outlined');
+            return icon && icon.textContent.includes('visibility');
+        }),
 
         // Action buttons
-        cancelButton: document.querySelector('button:has(.truncate:contains("Cancel"))'),
-        startButton: document.querySelector('button:has(.truncate:contains("Start Processing"))'),
+        cancelButton: Array.from(document.querySelectorAll('button')).find(btn =>
+            btn.textContent.includes('Cancel')
+        ),
+        startButton: Array.from(document.querySelectorAll('button')).find(btn =>
+            btn.textContent.includes('Start Processing')
+        ),
 
         // Progress indicators
         stepIndicators: document.querySelectorAll('.flex.flex-col.items-center.relative'),
