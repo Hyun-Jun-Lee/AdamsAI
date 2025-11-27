@@ -38,6 +38,8 @@ async def call_openrouter_api(prompt: str, model_name: str) -> str:
     try:
         settings = get_settings()
 
+        logger.info(f"Calling OpenRouter API with model: {model_name}")
+
         url = "https://openrouter.ai/api/v1/chat/completions"
         headers = {
             "Authorization": f"Bearer {settings.openrouter_api_key}",
@@ -51,15 +53,33 @@ async def call_openrouter_api(prompt: str, model_name: str) -> str:
             ]
         }
 
+        logger.info(f"Request payload: model={model_name}, prompt_length={len(prompt)}")
+
         async with httpx.AsyncClient(timeout=120.0) as client:
             response = await client.post(url, headers=headers, json=data)
 
+        logger.info(f"OpenRouter API response status: {response.status_code}")
+
         if response.status_code != 200:
-            logger.error(f"OpenRouter API error for model={model_name}: {response.status_code} - {response.text}")
-            raise Exception(f"OpenRouter API error: {response.status_code} - {response.text}")
+            error_detail = response.text
+            logger.error(f"OpenRouter API error for model={model_name}: {response.status_code}")
+            logger.error(f"Response body: {error_detail}")
+            raise Exception(f"OpenRouter API error: {response.status_code} - {error_detail}")
 
         result = response.json()
+        logger.info(f"OpenRouter API success for model={model_name}")
+
+        if "choices" not in result or len(result["choices"]) == 0:
+            logger.error(f"Invalid response structure: {result}")
+            raise Exception("Invalid response structure from OpenRouter API")
+
         return result["choices"][0]["message"]["content"]
+    except httpx.TimeoutException as e:
+        logger.error(f"Timeout calling OpenRouter API for model={model_name}: {str(e)}")
+        raise Exception(f"API request timeout after 120 seconds")
+    except httpx.RequestError as e:
+        logger.error(f"Request error calling OpenRouter API for model={model_name}: {str(e)}")
+        raise Exception(f"Network error: {str(e)}")
     except Exception as e:
         logger.error(f"Error in call_openrouter_api for model={model_name}: {str(e)}\n{traceback.format_exc()}")
         raise
@@ -144,11 +164,15 @@ async def handle_summary_generation(
     try:
         settings = get_settings()
 
+        logger.info(f"Starting summary generation for transcript_id={transcript_id}, model={model_name}, template_id={prompt_template_id}")
+
         # Get transcript record
         transcript = transcript_repository.get_transcript_by_id(db, transcript_id)
         if not transcript:
             logger.error(f"Transcript not found with id: {transcript_id}")
             raise ValueError(f"Transcript not found with id: {transcript_id}")
+
+        logger.info(f"Found transcript with id={transcript_id}, text_length={len(transcript.text)}")
 
         # Get prompt template
         try:
@@ -157,20 +181,25 @@ async def handle_summary_generation(
                 template_name=prompt_template_name,
                 template_id=prompt_template_id
             )
+            logger.info(f"Using prompt template id={used_template_id}")
         except ValueError as e:
             logger.error(f"Template error for transcript_id={transcript_id}: {str(e)}\n{traceback.format_exc()}")
             raise ValueError(f"Template error: {str(e)}")
 
         # Format prompt with transcript
         prompt = template_content.format(transcript=transcript.text)
+        logger.info(f"Formatted prompt length: {len(prompt)}")
 
         # Use default model if not specified
         if not model_name:
             model_name = settings.default_llm_model
+            logger.info(f"Using default model: {model_name}")
 
         # Call LLM API
         try:
+            logger.info(f"Calling LLM API with model: {model_name}")
             summary_text = await call_openrouter_api(prompt, model_name)
+            logger.info(f"Received summary text, length: {len(summary_text)}")
         except Exception as e:
             logger.error(f"Summarization failed for transcript_id={transcript_id}: {str(e)}\n{traceback.format_exc()}")
             raise ValueError(f"Summarization failed: {str(e)}")
@@ -187,7 +216,11 @@ async def handle_summary_generation(
             prompt_template_id=used_template_id
         )
 
-        return summary_repository.create_summary(db, summary_data)
+        logger.info(f"Creating summary record for transcript_id={transcript_id}")
+        summary = summary_repository.create_summary(db, summary_data)
+        logger.info(f"Successfully created summary with id={summary.id}")
+
+        return summary
     except ValueError:
         raise
     except Exception as e:
@@ -294,4 +327,34 @@ def get_summaries_by_model(
         }
     except Exception as e:
         logger.error(f"Error in get_summaries_by_model for model_name='{model_name}': {str(e)}\n{traceback.format_exc()}")
+        raise
+
+
+# ============================================================================
+# Delete Operations
+# ============================================================================
+
+def delete_summary(db: Session, summary_id: int) -> None:
+    """
+    Delete summary by ID.
+
+    Args:
+        db: Database session
+        summary_id: Summary ID
+
+    Raises:
+        ValueError: If summary not found
+    """
+    try:
+        summary = summary_repository.get_summary_by_id(db, summary_id)
+        if not summary:
+            logger.error(f"Summary not found with id: {summary_id}")
+            raise ValueError(f"Summary not found with id: {summary_id}")
+
+        summary_repository.delete_summary(db, summary_id)
+        logger.info(f"Successfully deleted summary with id: {summary_id}")
+    except ValueError:
+        raise
+    except Exception as e:
+        logger.error(f"Error in delete_summary for summary_id={summary_id}: {str(e)}\n{traceback.format_exc()}")
         raise

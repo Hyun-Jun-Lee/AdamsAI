@@ -6,6 +6,7 @@ Handles AI-powered text summarization.
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from typing import Optional, Dict, Any
+import logging
 
 from app.database import get_db
 from app.schemas import (
@@ -17,6 +18,7 @@ from app.schemas import (
 )
 from app.services import summary_service, prompt_template_service
 
+logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/api/summaries", tags=["summaries"])
 
 
@@ -34,6 +36,8 @@ async def create_summary(
     - **prompt_template_name**: Optional prompt template name
     """
     try:
+        logger.info(f"Received summary creation request: transcript_id={request.transcript_id}, model={request.ai_model_name}, template_id={request.prompt_template_id}")
+
         summary = await summary_service.handle_summary_generation(
             db,
             transcript_id=request.transcript_id,
@@ -41,10 +45,14 @@ async def create_summary(
             prompt_template_name=request.prompt_template_name,
             prompt_template_id=request.prompt_template_id
         )
+
+        logger.info(f"Summary created successfully with id={summary.id}")
         return SummaryResponse.model_validate(summary)
     except ValueError as e:
+        logger.error(f"Validation error in summary creation: {str(e)}")
         raise HTTPException(status_code=400, detail=str(e))
     except Exception as e:
+        logger.error(f"Unexpected error in summary creation: {str(e)}", exc_info=True)
         raise HTTPException(status_code=500, detail=f"Summarization failed: {str(e)}")
 
 
@@ -242,6 +250,24 @@ def get_summary(
     try:
         summary = summary_service.get_summary_by_id(db, summary_id)
         return SummaryResponse.model_validate(summary)
+    except ValueError as e:
+        raise HTTPException(status_code=404, detail=str(e))
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.delete("/{summary_id}", status_code=204)
+def delete_summary(
+    summary_id: int,
+    db: Session = Depends(get_db)
+) -> None:
+    """
+    Delete summary by ID.
+
+    - **summary_id**: Summary ID
+    """
+    try:
+        summary_service.delete_summary(db, summary_id)
     except ValueError as e:
         raise HTTPException(status_code=404, detail=str(e))
     except Exception as e:
