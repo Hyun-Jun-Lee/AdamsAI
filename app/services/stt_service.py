@@ -8,7 +8,7 @@ import traceback
 from typing import Dict, Any, Optional
 from sqlalchemy.orm import Session
 from pathlib import Path
-import httpx
+from openai import OpenAI, OpenAIError
 
 from app.config import get_settings
 from app.models import Transcript
@@ -22,7 +22,7 @@ logger = logging.getLogger(__name__)
 # External API Operations
 # ============================================================================
 
-async def call_whisper_api(audio_filepath: str, language: str = "ko") -> str:
+def call_whisper_api(audio_filepath: str, language: str = "ko") -> str:
     """
     Call OpenAI Whisper API for speech-to-text transcription.
 
@@ -39,59 +39,28 @@ async def call_whisper_api(audio_filepath: str, language: str = "ko") -> str:
     try:
         settings = get_settings()
 
-        # Prepare request
-        url = "https://api.openai.com/v1/audio/transcriptions"
-        headers = {
-            "Authorization": f"Bearer {settings.openai_api_key}"
-        }
+        # Initialize OpenAI client
+        client = OpenAI(api_key=settings.openai_api_key)
 
         # Open audio file and send request
         with open(audio_filepath, "rb") as audio_file:
-            files = {
-                "file": (Path(audio_filepath).name, audio_file, "audio/mpeg"),
-            }
-            data = {
-                "model": settings.default_whisper_model,
-                "language": language
-            }
-
-            # Use longer timeout and larger limits for file uploads
-            timeout = httpx.Timeout(
-                connect=30.0,  # Connection timeout
-                read=300.0,    # Read timeout (5 minutes)
-                write=300.0,   # Write timeout (5 minutes)
-                pool=30.0      # Pool timeout
+            transcription = client.audio.transcriptions.create(
+                model=settings.default_whisper_model,
+                file=audio_file,
+                language=language
             )
 
-            limits = httpx.Limits(
-                max_keepalive_connections=5,
-                max_connections=10,
-                keepalive_expiry=30.0
-            )
+        return transcription.text
 
-            async with httpx.AsyncClient(timeout=timeout, limits=limits) as client:
-                response = await client.post(
-                    url,
-                    headers=headers,
-                    files=files,
-                    data=data
-                )
-
-        if response.status_code != 200:
-            logger.error(f"Whisper API error for {audio_filepath}: {response.status_code} - {response.text}")
-            raise Exception(f"Whisper API error: {response.status_code} - {response.text}")
-
-        result = response.json()
-        return result.get("text", "")
-    except httpx.RemoteProtocolError as e:
-        logger.error(f"Connection error in call_whisper_api for {audio_filepath}: {str(e)}\n{traceback.format_exc()}")
-        raise Exception(f"Network connection error during transcription. Please try again. Error: {str(e)}")
-    except httpx.TimeoutException as e:
-        logger.error(f"Timeout error in call_whisper_api for {audio_filepath}: {str(e)}\n{traceback.format_exc()}")
-        raise Exception(f"Transcription timed out. The audio file may be too large. Error: {str(e)}")
+    except OpenAIError as e:
+        logger.error(f"OpenAI API error in call_whisper_api for {audio_filepath}: {str(e)}\n{traceback.format_exc()}")
+        raise Exception(f"Whisper API error: {str(e)}")
+    except FileNotFoundError as e:
+        logger.error(f"Audio file not found in call_whisper_api: {audio_filepath}: {str(e)}\n{traceback.format_exc()}")
+        raise Exception(f"Audio file not found: {audio_filepath}")
     except Exception as e:
         logger.error(f"Error in call_whisper_api for {audio_filepath}: {str(e)}\n{traceback.format_exc()}")
-        raise
+        raise Exception(f"Transcription failed: {str(e)}")
 
 
 # ============================================================================
@@ -128,7 +97,7 @@ async def handle_transcription(
 
         # Call Whisper API
         try:
-            transcribed_text = await call_whisper_api(
+            transcribed_text = call_whisper_api(
                 audio_filepath=audio.filepath,
                 language=language
             )
