@@ -13,7 +13,7 @@ import logging
 
 from app.config import get_settings
 from app.database import get_engine, Base
-from app.routers import videos, audios, transcripts, summaries
+from app.routers import videos, audios, transcripts, summaries, prompt_templates
 
 # Configure logging
 logging.basicConfig(
@@ -152,6 +152,7 @@ app.include_router(videos.router)
 app.include_router(audios.router)
 app.include_router(transcripts.router)
 app.include_router(summaries.router)
+app.include_router(prompt_templates.router)
 
 
 # Global exception handler
