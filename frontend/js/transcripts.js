@@ -3,7 +3,7 @@
  * Handles transcript listing, creation, viewing, and summary generation
  */
 
-import { transcriptAPI, audioAPI, summaryAPI } from './api.js';
+import { transcriptAPI, audioAPI, summaryAPI, templateAPI } from './api.js';
 import { showToast, showLoading, hideLoading, showConfirmModal } from './components.js';
 import { formatDate, truncate, debounce, copyToClipboard } from './utils.js';
 
@@ -512,7 +512,7 @@ function formatDuration(seconds) {
 /**
  * Show generate summary modal
  */
-function showGenerateSummaryModal(transcriptId) {
+async function showGenerateSummaryModal(transcriptId) {
     const modal = document.createElement('div');
     modal.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4';
     modal.innerHTML = `
@@ -527,24 +527,29 @@ function showGenerateSummaryModal(transcriptId) {
             <div class="space-y-4">
                 <div>
                     <label class="block text-sm font-medium text-text-primary-light dark:text-text-primary-dark mb-2">AI Model</label>
-                    <select
-                        id="ai-model-select"
+                    <input
+                        type="text"
+                        id="ai-model-input"
                         class="w-full rounded-lg border border-border-light dark:border-border-dark bg-surface-light dark:bg-surface-dark text-text-primary-light dark:text-text-primary-dark p-2 focus:border-primary focus:ring-primary"
-                    >
-                        <option value="anthropic/claude-3.5-sonnet">Claude 3.5 Sonnet (Recommended)</option>
-                        <option value="anthropic/claude-3-sonnet-20240229">Claude 3 Sonnet</option>
-                        <option value="openai/gpt-4-turbo">GPT-4 Turbo</option>
-                    </select>
+                        placeholder="e.g., google/gemini-2.5-flash-lite-preview-09-2025"
+                        value="google/gemini-2.5-flash-lite-preview-09-2025"
+                    />
+                    <p class="text-xs text-text-secondary-light dark:text-text-secondary-dark mt-1">
+                        Enter the model identifier (e.g., google/gemini-2.5-flash-lite-preview-09-2025, anthropic/claude-3.5-sonnet)
+                    </p>
                 </div>
 
                 <div>
-                    <label class="block text-sm font-medium text-text-primary-light dark:text-text-primary-dark mb-2">Custom Prompt (Optional)</label>
-                    <textarea
-                        id="custom-prompt-input"
-                        rows="4"
+                    <label class="block text-sm font-medium text-text-primary-light dark:text-text-primary-dark mb-2">Prompt Template</label>
+                    <select
+                        id="prompt-template-select"
                         class="w-full rounded-lg border border-border-light dark:border-border-dark bg-surface-light dark:bg-surface-dark text-text-primary-light dark:text-text-primary-dark p-2 focus:border-primary focus:ring-primary"
-                        placeholder="Enter custom summarization instructions..."
-                    ></textarea>
+                    >
+                        <option value="">Loading templates...</option>
+                    </select>
+                    <p class="text-xs text-text-secondary-light dark:text-text-secondary-dark mt-1">
+                        Select a prompt template for summarization
+                    </p>
                 </div>
 
                 <div class="flex justify-end gap-3 mt-6">
@@ -559,17 +564,46 @@ function showGenerateSummaryModal(transcriptId) {
         </div>
     `;
 
+    document.body.appendChild(modal);
+
+    // Load prompt templates
+    try {
+        const templates = await templateAPI.getAll({ is_active: true });
+        const selectElement = modal.querySelector('#prompt-template-select');
+
+        if (templates.length === 0) {
+            selectElement.innerHTML = '<option value="">No templates available</option>';
+        } else {
+            selectElement.innerHTML = templates.map(template => `
+                <option value="${template.id}">${template.name}${template.description ? ` - ${template.description}` : ''}</option>
+            `).join('');
+        }
+    } catch (error) {
+        console.error('Failed to load templates:', error);
+        modal.querySelector('#prompt-template-select').innerHTML = '<option value="">Failed to load templates</option>';
+    }
+
     // Event listeners
     modal.querySelector('.close-btn')?.addEventListener('click', () => modal.remove());
     modal.querySelector('.cancel-btn')?.addEventListener('click', () => modal.remove());
     modal.querySelector('.generate-btn')?.addEventListener('click', async () => {
-        const aiModel = document.getElementById('ai-model-select')?.value;
-        const customPrompt = document.getElementById('custom-prompt-input')?.value.trim() || null;
+        const aiModel = document.getElementById('ai-model-input')?.value.trim();
+        const promptTemplateId = document.getElementById('prompt-template-select')?.value;
+
+        if (!aiModel) {
+            showToast('Please enter an AI model', 'error');
+            return;
+        }
+
+        if (!promptTemplateId) {
+            showToast('Please select a prompt template', 'error');
+            return;
+        }
 
         try {
             showLoading('Generating summary...');
             modal.remove();
-            const summary = await summaryAPI.create(transcriptId, null, customPrompt, aiModel);
+            const summary = await summaryAPI.create(transcriptId, parseInt(promptTemplateId), null, aiModel);
             showToast('Summary generated successfully!', 'success');
 
             // Redirect to summaries page
@@ -587,8 +621,6 @@ function showGenerateSummaryModal(transcriptId) {
     modal.addEventListener('click', (e) => {
         if (e.target === modal) modal.remove();
     });
-
-    document.body.appendChild(modal);
 }
 
 /**
