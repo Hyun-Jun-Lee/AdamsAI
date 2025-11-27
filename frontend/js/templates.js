@@ -231,14 +231,256 @@ function attachCardEventListeners() {
  * Show create modal
  */
 function showCreateModal() {
-    showToast('Create template modal - Coming soon!', 'info');
+    const modal = document.createElement('div');
+    modal.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4';
+    modal.innerHTML = `
+        <div class="bg-white dark:bg-slate-900 rounded-xl max-w-2xl w-full max-h-[90vh] overflow-auto">
+            <div class="sticky top-0 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 p-6 flex justify-between items-start">
+                <div>
+                    <h3 class="text-2xl font-bold text-slate-900 dark:text-white">Create Prompt Template</h3>
+                    <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">Create a new template for summarization</p>
+                </div>
+                <button class="close-btn text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white">
+                    <span class="material-symbols-outlined">close</span>
+                </button>
+            </div>
+
+            <div class="p-6 space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-slate-900 dark:text-white mb-2">Template Name *</label>
+                    <input
+                        type="text"
+                        id="template-name"
+                        class="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white p-2 focus:border-primary focus:ring-primary"
+                        placeholder="e.g., Meeting Summary, Interview Analysis"
+                        required
+                    />
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-slate-900 dark:text-white mb-2">Description</label>
+                    <input
+                        type="text"
+                        id="template-description"
+                        class="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white p-2 focus:border-primary focus:ring-primary"
+                        placeholder="Brief description of the template purpose"
+                    />
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-slate-900 dark:text-white mb-2">Category</label>
+                    <input
+                        type="text"
+                        id="template-category"
+                        class="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white p-2 focus:border-primary focus:ring-primary"
+                        placeholder="e.g., general, meeting, interview"
+                        value="general"
+                    />
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-slate-900 dark:text-white mb-2">Prompt Content *</label>
+                    <textarea
+                        id="template-content"
+                        rows="8"
+                        class="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white p-2 focus:border-primary focus:ring-primary font-mono text-sm"
+                        placeholder="Enter your prompt template. Use {transcript} as a placeholder for the transcript text.&#10;&#10;Example:&#10;Summarize the following transcript and extract key points:&#10;{transcript}"
+                        required
+                    ></textarea>
+                    <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">
+                        Use <code class="bg-slate-100 dark:bg-slate-800 px-1 rounded">{transcript}</code> as a placeholder for the transcript text
+                    </p>
+                </div>
+
+                <div class="flex justify-end gap-3 mt-6 pt-6 border-t border-slate-200 dark:border-slate-800">
+                    <button class="cancel-btn px-4 py-2 bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white rounded-lg hover:bg-slate-200 dark:hover:bg-slate-700">
+                        Cancel
+                    </button>
+                    <button class="create-btn px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90">
+                        Create Template
+                    </button>
+                </div>
+            </div>
+        </div>
+    `;
+
+    // Event listeners
+    modal.querySelector('.close-btn')?.addEventListener('click', () => modal.remove());
+    modal.querySelector('.cancel-btn')?.addEventListener('click', () => modal.remove());
+    modal.querySelector('.create-btn')?.addEventListener('click', async () => {
+        const name = document.getElementById('template-name')?.value.trim();
+        const description = document.getElementById('template-description')?.value.trim() || null;
+        const category = document.getElementById('template-category')?.value.trim() || 'general';
+        const content = document.getElementById('template-content')?.value.trim();
+
+        if (!name) {
+            showToast('Please enter a template name', 'error');
+            return;
+        }
+
+        if (!content) {
+            showToast('Please enter template content', 'error');
+            return;
+        }
+
+        if (!content.includes('{transcript}')) {
+            showToast('Template content must include {transcript} placeholder', 'error');
+            return;
+        }
+
+        try {
+            showLoading('Creating template...');
+            modal.remove();
+            const template = await templateAPI.create(name, content, description, category);
+            showToast('Template created successfully!', 'success');
+
+            // Add to state and re-render
+            state.templates.unshift(template);
+            filterTemplates();
+        } catch (error) {
+            console.error('Failed to create template:', error);
+            showToast(error.message || 'Failed to create template', 'error');
+        } finally {
+            hideLoading();
+        }
+    });
+
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) modal.remove();
+    });
+
+    document.body.appendChild(modal);
 }
 
 /**
  * Show edit modal
  */
 function showEditModal(template) {
-    showToast(`Edit template: ${template.name} - Coming soon!`, 'info');
+    const modal = document.createElement('div');
+    modal.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4';
+    modal.innerHTML = `
+        <div class="bg-white dark:bg-slate-900 rounded-xl max-w-2xl w-full max-h-[90vh] overflow-auto">
+            <div class="sticky top-0 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 p-6 flex justify-between items-start">
+                <div>
+                    <h3 class="text-2xl font-bold text-slate-900 dark:text-white">Edit Prompt Template</h3>
+                    <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">Update template settings and content</p>
+                </div>
+                <button class="close-btn text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white">
+                    <span class="material-symbols-outlined">close</span>
+                </button>
+            </div>
+
+            <div class="p-6 space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-slate-900 dark:text-white mb-2">Template Name *</label>
+                    <input
+                        type="text"
+                        id="edit-template-name"
+                        class="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white p-2 focus:border-primary focus:ring-primary"
+                        value="${template.name}"
+                        required
+                    />
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-slate-900 dark:text-white mb-2">Description</label>
+                    <input
+                        type="text"
+                        id="edit-template-description"
+                        class="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white p-2 focus:border-primary focus:ring-primary"
+                        value="${template.description || ''}"
+                    />
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-slate-900 dark:text-white mb-2">Category</label>
+                    <input
+                        type="text"
+                        id="edit-template-category"
+                        class="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white p-2 focus:border-primary focus:ring-primary"
+                        value="${template.category || 'general'}"
+                    />
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-slate-900 dark:text-white mb-2">Prompt Content *</label>
+                    <textarea
+                        id="edit-template-content"
+                        rows="8"
+                        class="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white p-2 focus:border-primary focus:ring-primary font-mono text-sm"
+                        required
+                    >${template.content}</textarea>
+                    <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">
+                        Use <code class="bg-slate-100 dark:bg-slate-800 px-1 rounded">{transcript}</code> as a placeholder for the transcript text
+                    </p>
+                </div>
+
+                <div class="flex justify-end gap-3 mt-6 pt-6 border-t border-slate-200 dark:border-slate-800">
+                    <button class="cancel-btn px-4 py-2 bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white rounded-lg hover:bg-slate-200 dark:hover:bg-slate-700">
+                        Cancel
+                    </button>
+                    <button class="update-btn px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90">
+                        Update Template
+                    </button>
+                </div>
+            </div>
+        </div>
+    `;
+
+    // Event listeners
+    modal.querySelector('.close-btn')?.addEventListener('click', () => modal.remove());
+    modal.querySelector('.cancel-btn')?.addEventListener('click', () => modal.remove());
+    modal.querySelector('.update-btn')?.addEventListener('click', async () => {
+        const name = document.getElementById('edit-template-name')?.value.trim();
+        const description = document.getElementById('edit-template-description')?.value.trim() || null;
+        const category = document.getElementById('edit-template-category')?.value.trim() || 'general';
+        const content = document.getElementById('edit-template-content')?.value.trim();
+
+        if (!name) {
+            showToast('Please enter a template name', 'error');
+            return;
+        }
+
+        if (!content) {
+            showToast('Please enter template content', 'error');
+            return;
+        }
+
+        if (!content.includes('{transcript}')) {
+            showToast('Template content must include {transcript} placeholder', 'error');
+            return;
+        }
+
+        try {
+            showLoading('Updating template...');
+            modal.remove();
+            const updatedTemplate = await templateAPI.update(template.id, {
+                name,
+                description,
+                category,
+                content
+            });
+            showToast('Template updated successfully!', 'success');
+
+            // Update state
+            const index = state.templates.findIndex(t => t.id === template.id);
+            if (index !== -1) {
+                state.templates[index] = updatedTemplate;
+            }
+            filterTemplates();
+        } catch (error) {
+            console.error('Failed to update template:', error);
+            showToast(error.message || 'Failed to update template', 'error');
+        } finally {
+            hideLoading();
+        }
+    });
+
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) modal.remove();
+    });
+
+    document.body.appendChild(modal);
 }
 
 /**
