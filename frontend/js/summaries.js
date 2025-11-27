@@ -3,7 +3,7 @@
  * Handles summary listing, viewing, filtering, and management
  */
 
-import { summaryAPI } from './api.js';
+import { summaryAPI, transcriptAPI, templateAPI } from './api.js';
 import { showToast, showLoading, hideLoading, showConfirmModal } from './components.js';
 import { formatDate, truncate, debounce, copyToClipboard, downloadText } from './utils.js';
 
@@ -18,6 +18,158 @@ const state = {
 
 // DOM Elements
 let elements = {};
+
+/**
+ * Show Generate Summary Modal
+ */
+async function showGenerateSummaryModal() {
+    try {
+        // Create modal
+        const modal = document.createElement('div');
+        modal.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4';
+        modal.innerHTML = `
+            <div class="bg-white dark:bg-surface-dark rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+                <div class="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
+                    <h2 class="text-xl font-bold text-gray-900 dark:text-white">Generate Summary</h2>
+                    <button class="close-modal text-gray-500 hover:text-primary">
+                        <span class="material-symbols-outlined">close</span>
+                    </button>
+                </div>
+
+                <div class="p-6 space-y-4">
+                    <!-- Transcript Selection -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                            Select Transcript *
+                        </label>
+                        <select id="transcript-select" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent">
+                            <option value="">Loading transcripts...</option>
+                        </select>
+                    </div>
+
+                    <!-- Prompt Template Selection -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                            Select Prompt Template *
+                        </label>
+                        <select id="prompt-template-select" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent">
+                            <option value="">Loading templates...</option>
+                        </select>
+                    </div>
+
+                    <!-- AI Model Input -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                            AI Model *
+                        </label>
+                        <input
+                            type="text"
+                            id="ai-model-input"
+                            value="google/gemini-2.5-flash-lite-preview-09-2025"
+                            placeholder="e.g., google/gemini-2.5-flash-lite-preview-09-2025"
+                            class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent"
+                        />
+                        <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">Enter the AI model identifier (e.g., google/gemini-2.5-flash-lite-preview-09-2025, anthropic/claude-3.5-sonnet)</p>
+                    </div>
+                </div>
+
+                <div class="flex items-center justify-end gap-3 p-6 border-t border-gray-200 dark:border-gray-700">
+                    <button class="cancel-btn px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg">
+                        Cancel
+                    </button>
+                    <button class="generate-btn px-4 py-2 text-sm font-medium text-white bg-primary hover:bg-primary/90 rounded-lg">
+                        Generate Summary
+                    </button>
+                </div>
+            </div>
+        `;
+
+        // Load transcripts
+        const transcripts = await transcriptAPI.getAll({ limit: 100 });
+        const transcriptSelect = modal.querySelector('#transcript-select');
+        if (transcripts.length === 0) {
+            transcriptSelect.innerHTML = '<option value="">No transcripts available</option>';
+        } else {
+            transcriptSelect.innerHTML = `
+                <option value="">Select a transcript...</option>
+                ${transcripts.map(t => `
+                    <option value="${t.id}">
+                        Transcript #${t.id} - ${t.language} (${formatDate(t.created_at)})
+                    </option>
+                `).join('')}
+            `;
+        }
+
+        // Load prompt templates
+        const templates = await templateAPI.getAll({ is_active: true });
+        const templateSelect = modal.querySelector('#prompt-template-select');
+        if (templates.length === 0) {
+            templateSelect.innerHTML = '<option value="">No templates available</option>';
+        } else {
+            templateSelect.innerHTML = `
+                <option value="">Select a template...</option>
+                ${templates.map(t => `
+                    <option value="${t.id}">
+                        ${t.name}${t.description ? ` - ${t.description}` : ''}
+                    </option>
+                `).join('')}
+            `;
+        }
+
+        // Event listeners
+        modal.querySelector('.close-modal')?.addEventListener('click', () => modal.remove());
+        modal.querySelector('.cancel-btn')?.addEventListener('click', () => modal.remove());
+
+        modal.querySelector('.generate-btn')?.addEventListener('click', async () => {
+            const transcriptId = parseInt(transcriptSelect.value);
+            const templateId = parseInt(templateSelect.value);
+            const aiModel = modal.querySelector('#ai-model-input').value.trim();
+
+            // Validation
+            if (!transcriptId) {
+                showToast('Please select a transcript', 'error');
+                return;
+            }
+            if (!templateId) {
+                showToast('Please select a prompt template', 'error');
+                return;
+            }
+            if (!aiModel) {
+                showToast('Please enter an AI model', 'error');
+                return;
+            }
+
+            try {
+                modal.remove();
+                showLoading('Generating summary...');
+
+                const summary = await summaryAPI.create(transcriptId, templateId, aiModel);
+
+                showToast('Summary generated successfully', 'success');
+
+                // Reload summaries
+                await loadSummaries();
+
+                // Optionally, view the newly created summary
+                viewSummary(summary.id);
+            } catch (error) {
+                console.error('Failed to generate summary:', error);
+                showToast(error.message || 'Failed to generate summary', 'error');
+            } finally {
+                hideLoading();
+            }
+        });
+
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) modal.remove();
+        });
+
+        document.body.appendChild(modal);
+    } catch (error) {
+        console.error('Failed to show modal:', error);
+        showToast('Failed to load modal data', 'error');
+    }
+}
 
 /**
  * Initialize the page
@@ -76,7 +228,7 @@ function setupEventListeners() {
 
     // Generate button
     elements.generateButton?.addEventListener('click', () => {
-        window.location.href = '/workflow-page';
+        showGenerateSummaryModal();
     });
 }
 
@@ -108,7 +260,7 @@ function filterSummaries() {
     // Filter by search query
     if (state.searchQuery) {
         filtered = filtered.filter(s =>
-            s.content.toLowerCase().includes(state.searchQuery) ||
+            (s.content && s.content.toLowerCase().includes(state.searchQuery)) ||
             (s.ai_model && s.ai_model.toLowerCase().includes(state.searchQuery))
         );
     }
@@ -161,8 +313,9 @@ function renderSummaries() {
  * Create summary card HTML
  */
 function createSummaryCard(summary) {
-    const contentPreview = truncate(summary.content, 250, '...');
-    const wordCount = summary.content.split(/\s+/).length;
+    const content = summary.content || '';
+    const contentPreview = truncate(content, 250, '...');
+    const wordCount = content ? content.split(/\s+/).length : 0;
 
     // Extract model name for display
     const modelName = extractModelName(summary.ai_model);
@@ -256,7 +409,7 @@ function renderEmptyState(message = 'No summaries found') {
     `;
 
     document.querySelector('.create-empty-btn')?.addEventListener('click', () => {
-        window.location.href = '/workflow-page';
+        showGenerateSummaryModal();
     });
 }
 
@@ -279,7 +432,7 @@ function attachCardEventListeners() {
             e.stopPropagation();
             const summaryId = parseInt(btn.dataset.id);
             const summary = state.summaries.find(s => s.id === summaryId);
-            if (summary) {
+            if (summary && summary.content) {
                 const success = await copyToClipboard(summary.content);
                 if (success) showToast('Summary copied to clipboard', 'success');
             }
@@ -292,7 +445,7 @@ function attachCardEventListeners() {
             e.stopPropagation();
             const summaryId = parseInt(btn.dataset.id);
             const summary = state.summaries.find(s => s.id === summaryId);
-            if (summary) {
+            if (summary && summary.content) {
                 downloadText(summary.content, `summary_${summaryId}.txt`, 'text/plain');
                 showToast('Summary downloaded', 'success');
             }
@@ -316,7 +469,8 @@ function viewSummary(summaryId) {
     const summary = state.summaries.find(s => s.id === summaryId);
     if (!summary) return;
 
-    const wordCount = summary.content.split(/\s+/).length;
+    const content = summary.content || '';
+    const wordCount = content ? content.split(/\s+/).length : 0;
     const modelName = extractModelName(summary.ai_model);
 
     const modal = document.createElement('div');
@@ -345,7 +499,7 @@ function viewSummary(summaryId) {
             </div>
             <div class="p-6">
                 <div class="bg-gray-50 dark:bg-gray-800 rounded-lg p-6 border border-gray-200 dark:border-gray-700">
-                    <p class="text-gray-900 dark:text-white text-base leading-relaxed whitespace-pre-wrap">${summary.content}</p>
+                    <p class="text-gray-900 dark:text-white text-base leading-relaxed whitespace-pre-wrap">${content}</p>
                 </div>
             </div>
             <div class="sticky bottom-0 bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800 p-6 flex justify-end gap-3">
@@ -362,11 +516,11 @@ function viewSummary(summaryId) {
     // Event listeners
     modal.querySelector('.close-btn')?.addEventListener('click', () => modal.remove());
     modal.querySelector('.copy-full-btn')?.addEventListener('click', async () => {
-        const success = await copyToClipboard(summary.content);
+        const success = await copyToClipboard(content);
         if (success) showToast('Summary copied to clipboard', 'success');
     });
     modal.querySelector('.download-full-btn')?.addEventListener('click', () => {
-        downloadText(summary.content, `summary_${summaryId}.txt`, 'text/plain');
+        downloadText(content, `summary_${summaryId}.txt`, 'text/plain');
         showToast('Summary downloaded', 'success');
     });
 
