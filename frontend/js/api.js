@@ -233,20 +233,17 @@ export const summaryAPI = {
     /**
      * Create summary from transcript
      */
-    async create(transcriptId, promptTemplateId = null, customPrompt = null, aiModel = 'anthropic/claude-3.5-sonnet') {
+    async create(transcriptId, promptTemplateId = null, aiModel = 'anthropic/claude-3.5-sonnet') {
         const body = {
             transcript_id: transcriptId,
-            ai_model: aiModel,
+            ai_model_name: aiModel,
         };
 
         if (promptTemplateId) {
             body.prompt_template_id = promptTemplateId;
         }
-        if (customPrompt) {
-            body.custom_prompt = customPrompt;
-        }
 
-        return apiFetch('/summaries/', {
+        return apiFetch('/summaries/create', {
             method: 'POST',
             body: JSON.stringify(body),
         });
@@ -271,38 +268,40 @@ export const templateAPI = {
      */
     async getAll(params = {}) {
         const queryParams = new URLSearchParams();
-        // Don't send is_active parameter for now, filter client-side
+        if (params.is_active !== undefined) queryParams.append('is_active', params.is_active);
         if (params.offset !== undefined) queryParams.append('offset', params.offset);
         if (params.limit !== undefined) queryParams.append('limit', params.limit || 100);
 
         const query = queryParams.toString();
-        const result = await apiFetch(`/summaries/templates${query ? '?' + query : ''}`);
-        const items = result.items || [];
-
-        // Filter by is_active if specified
-        if (params.is_active !== undefined) {
-            return items.filter(t => t.is_active === params.is_active);
-        }
-        return items;
+        const result = await apiFetch(`/prompt-templates${query ? '?' + query : ''}`);
+        return result.items || [];
     },
 
     /**
      * Get template by ID
      */
     async getById(templateId) {
-        return apiFetch(`/summaries/templates/${templateId}`);
+        return apiFetch(`/prompt-templates/${templateId}`);
+    },
+
+    /**
+     * Get template by name
+     */
+    async getByName(name) {
+        return apiFetch(`/prompt-templates/name/${encodeURIComponent(name)}`);
     },
 
     /**
      * Create new template
      */
-    async create(name, content, description = null) {
-        return apiFetch('/summaries/templates/', {
+    async create(name, content, description = null, category = 'general') {
+        return apiFetch('/prompt-templates', {
             method: 'POST',
             body: JSON.stringify({
                 name,
                 content,
                 description,
+                category,
                 is_active: true,
             }),
         });
@@ -312,7 +311,7 @@ export const templateAPI = {
      * Update template
      */
     async update(templateId, data) {
-        return apiFetch(`/summaries/templates/${templateId}`, {
+        return apiFetch(`/prompt-templates/${templateId}`, {
             method: 'PUT',
             body: JSON.stringify(data),
         });
@@ -322,7 +321,7 @@ export const templateAPI = {
      * Delete template
      */
     async delete(templateId) {
-        return apiFetch(`/summaries/templates/${templateId}`, {
+        return apiFetch(`/prompt-templates/${templateId}`, {
             method: 'DELETE',
         });
     },
@@ -331,7 +330,9 @@ export const templateAPI = {
      * Toggle template active status
      */
     async toggleActive(templateId, isActive) {
-        return this.update(templateId, { is_active: isActive });
+        return apiFetch(`/prompt-templates/${templateId}/toggle?is_active=${isActive}`, {
+            method: 'PATCH',
+        });
     },
 };
 
