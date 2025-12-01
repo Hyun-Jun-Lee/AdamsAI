@@ -133,21 +133,36 @@ function renderTemplates() {
  * Create template card HTML
  */
 function createTemplateCard(template) {
+    // Truncate content for preview
+    const contentPreview = template.content && template.content.length > 150
+        ? template.content.substring(0, 150) + '...'
+        : template.content || '';
+
+    // Highlight {transcript} placeholder
+    const highlightedContent = contentPreview.replace(
+        /\{transcript\}/g,
+        '<span class="text-primary font-semibold">{transcript}</span>'
+    );
+
     return `
-        <div class="flex flex-col gap-4 p-5 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm">
+        <div class="flex flex-col gap-4 p-5 bg-white dark:bg-slate-900 rounded-xl border ${template.is_active ? 'border-primary border-2' : 'border-slate-200 dark:border-slate-800'} shadow-sm hover:shadow-lg transition-shadow">
             <div class="flex justify-between items-start">
                 <h3 class="text-lg font-bold text-slate-900 dark:text-white">${template.name}</h3>
                 <div class="flex items-center gap-2">
+                    <span class="text-xs font-medium ${template.is_active ? 'text-green-600 dark:text-green-400' : 'text-slate-500 dark:text-slate-400'}">${template.is_active ? 'Active' : 'Inactive'}</span>
                     <label class="relative inline-flex items-center cursor-pointer">
                         <input type="checkbox" class="sr-only peer toggle-active" data-id="${template.id}" ${template.is_active ? 'checked' : ''}>
                         <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-primary/20 dark:peer-focus:ring-primary/40 rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-slate-600 peer-checked:bg-primary"></div>
                     </label>
                 </div>
             </div>
+            ${template.category ? `<span class="text-xs font-semibold uppercase tracking-wider text-blue-700 dark:text-blue-400 bg-blue-100 dark:bg-blue-900/50 px-2 py-1 rounded-full self-start">${template.category}</span>` : ''}
             <p class="text-slate-600 dark:text-slate-400 text-sm">${template.description || 'No description'}</p>
+            <div class="bg-slate-100 dark:bg-slate-800/80 rounded-lg p-3 text-sm font-mono text-slate-700 dark:text-slate-300">
+                <p class="line-clamp-3">${highlightedContent}</p>
+            </div>
             <div class="text-xs text-slate-500 dark:text-slate-400">
                 <p>Created: ${formatDate(template.created_at)}</p>
-                ${template.category ? `<p>Category: ${template.category}</p>` : ''}
             </div>
             <div class="flex items-center gap-2 border-t border-slate-200 dark:border-slate-800 pt-4">
                 <button class="edit-btn flex items-center gap-2 px-3 py-2 rounded-md bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-sm font-medium" data-id="${template.id}">
