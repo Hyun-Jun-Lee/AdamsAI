@@ -99,10 +99,14 @@ export const videoAPI = {
     /**
      * Download video from URL
      */
-    async downloadFromUrl(url) {
+    async downloadFromUrl(url, title = null) {
+        const body = { url };
+        if (title) {
+            body.title = title;
+        }
         return apiFetch('/videos/download', {
             method: 'POST',
-            body: JSON.stringify({ url }),
+            body: JSON.stringify(body),
         });
     },
 

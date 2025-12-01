@@ -65,8 +65,117 @@ function setupEventListeners() {
 
     // Download URL button
     elements.downloadUrlButton?.addEventListener('click', () => {
-        window.location.href = '/videos-page';
+        showDownloadUrlModal();
     });
+}
+
+/**
+ * Show Download from URL Modal
+ */
+function showDownloadUrlModal() {
+    const modal = document.createElement('div');
+    modal.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4';
+    modal.innerHTML = `
+        <div class="bg-white dark:bg-slate-900 rounded-xl max-w-lg w-full">
+            <div class="flex items-center justify-between p-6 border-b border-slate-200 dark:border-slate-700">
+                <h2 class="text-xl font-bold text-slate-900 dark:text-white">Download from URL</h2>
+                <button class="close-modal text-slate-500 hover:text-primary">
+                    <span class="material-symbols-outlined">close</span>
+                </button>
+            </div>
+
+            <div class="p-6 space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                        Video URL *
+                    </label>
+                    <input
+                        type="url"
+                        id="video-url-input"
+                        placeholder="https://youtube.com/watch?v=... or video URL"
+                        class="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent"
+                    />
+                    <p class="mt-1 text-xs text-slate-500 dark:text-slate-400">
+                        Supports YouTube, Vimeo, and direct video URLs (including m3u8)
+                    </p>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                        Title (Optional)
+                    </label>
+                    <input
+                        type="text"
+                        id="video-title-input"
+                        placeholder="Custom title for the video"
+                        class="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent"
+                    />
+                </div>
+            </div>
+
+            <div class="flex items-center justify-end gap-3 p-6 border-t border-slate-200 dark:border-slate-700">
+                <button class="cancel-btn px-4 py-2 text-sm font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg">
+                    Cancel
+                </button>
+                <button class="download-btn px-4 py-2 text-sm font-medium text-white bg-primary hover:bg-primary/90 rounded-lg flex items-center gap-2">
+                    <span class="material-symbols-outlined text-base">download</span>
+                    Download
+                </button>
+            </div>
+        </div>
+    `;
+
+    // Event listeners
+    modal.querySelector('.close-modal')?.addEventListener('click', () => modal.remove());
+    modal.querySelector('.cancel-btn')?.addEventListener('click', () => modal.remove());
+
+    modal.querySelector('.download-btn')?.addEventListener('click', async () => {
+        const urlInput = modal.querySelector('#video-url-input');
+        const titleInput = modal.querySelector('#video-title-input');
+        const url = urlInput.value.trim();
+        const title = titleInput.value.trim();
+
+        if (!url) {
+            showToast('Please enter a video URL', 'error');
+            urlInput.focus();
+            return;
+        }
+
+        // Basic URL validation
+        try {
+            new URL(url);
+        } catch {
+            showToast('Please enter a valid URL', 'error');
+            urlInput.focus();
+            return;
+        }
+
+        try {
+            modal.remove();
+            showLoading('Starting video download...');
+
+            const video = await videoAPI.downloadFromUrl(url, title || undefined);
+
+            showToast('Video download started successfully', 'success');
+
+            // Refresh dashboard data
+            await loadDashboard();
+        } catch (error) {
+            console.error('Failed to download video:', error);
+            showToast(error.message || 'Failed to download video', 'error');
+        } finally {
+            hideLoading();
+        }
+    });
+
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) modal.remove();
+    });
+
+    document.body.appendChild(modal);
+
+    // Focus on URL input
+    modal.querySelector('#video-url-input')?.focus();
 }
 
 /**

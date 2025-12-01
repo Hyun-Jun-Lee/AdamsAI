@@ -136,20 +136,35 @@ async def handle_video_download(
         try:
             download_result = download_video_from_url(
                 url=url,
-                output_dir=str(settings.videos_dir),
+                output_dir=Path(settings.videos_dir),
                 filename=title
             )
         except Exception as e:
             logger.error(f"Download failed for URL={url}: {str(e)}\n{traceback.format_exc()}")
             raise Exception(f"Download failed: {str(e)}")
 
+        # Check if download succeeded
+        if not download_result:
+            logger.error(f"Download returned None for URL={url}")
+            raise Exception("Download failed: No result returned")
+
+        # Extract filepath and generate filename
+        filepath = download_result.get("filepath")
+        if not filepath:
+            logger.error(f"Download result missing filepath for URL={url}")
+            raise Exception("Download failed: No filepath in result")
+
+        # Convert Path to string if needed
+        filepath_str = str(filepath)
+        filename = Path(filepath_str).name
+
         # Create video record
         video_data = VideoCreate(
-            filename=download_result["filename"],
-            filepath=download_result["filepath"],
+            filename=filename,
+            filepath=filepath_str,
             source_type="download",
             source_url=url,
-            file_size=download_result.get("file_size"),
+            file_size=download_result.get("filesize"),  # downloader returns 'filesize' not 'file_size'
             duration=download_result.get("duration"),
             status="uploaded"
         )
