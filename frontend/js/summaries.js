@@ -260,15 +260,15 @@ function filterSummaries() {
     // Filter by search query
     if (state.searchQuery) {
         filtered = filtered.filter(s =>
-            (s.content && s.content.toLowerCase().includes(state.searchQuery)) ||
-            (s.ai_model && s.ai_model.toLowerCase().includes(state.searchQuery))
+            (s.summary_text && s.summary_text.toLowerCase().includes(state.searchQuery)) ||
+            (s.ai_model_name && s.ai_model_name.toLowerCase().includes(state.searchQuery))
         );
     }
 
     // Filter by model
     if (state.modelFilter && state.modelFilter !== 'all') {
         filtered = filtered.filter(s =>
-            s.ai_model.toLowerCase().includes(state.modelFilter)
+            s.ai_model_name && s.ai_model_name.toLowerCase().includes(state.modelFilter)
         );
     }
 
@@ -280,7 +280,7 @@ function filterSummaries() {
             case 'oldest':
                 return new Date(a.created_at) - new Date(b.created_at);
             case 'model':
-                return (a.ai_model || '').localeCompare(b.ai_model || '');
+                return (a.ai_model_name || '').localeCompare(b.ai_model_name || '');
             default:
                 return 0;
         }
@@ -313,13 +313,13 @@ function renderSummaries() {
  * Create summary card HTML
  */
 function createSummaryCard(summary) {
-    const content = summary.content || '';
+    const content = summary.summary_text || '';
     const contentPreview = truncate(content, 250, '...');
     const wordCount = content ? content.split(/\s+/).length : 0;
 
     // Extract model name for display
-    const modelName = extractModelName(summary.ai_model);
-    const modelColor = getModelColor(summary.ai_model);
+    const modelName = extractModelName(summary.ai_model_name);
+    const modelColor = getModelColor(summary.ai_model_name);
 
     return `
         <div class="flex flex-col gap-4 p-5 bg-white dark:bg-gray-900/50 rounded-xl border border-gray-200 dark:border-gray-800 hover:border-primary/50 transition-all duration-300" data-id="${summary.id}">
@@ -432,8 +432,8 @@ function attachCardEventListeners() {
             e.stopPropagation();
             const summaryId = parseInt(btn.dataset.id);
             const summary = state.summaries.find(s => s.id === summaryId);
-            if (summary && summary.content) {
-                const success = await copyToClipboard(summary.content);
+            if (summary && summary.summary_text) {
+                const success = await copyToClipboard(summary.summary_text);
                 if (success) showToast('Summary copied to clipboard', 'success');
             }
         });
@@ -445,8 +445,8 @@ function attachCardEventListeners() {
             e.stopPropagation();
             const summaryId = parseInt(btn.dataset.id);
             const summary = state.summaries.find(s => s.id === summaryId);
-            if (summary && summary.content) {
-                downloadText(summary.content, `summary_${summaryId}.txt`, 'text/plain');
+            if (summary && summary.summary_text) {
+                downloadText(summary.summary_text, `summary_${summaryId}.txt`, 'text/plain');
                 showToast('Summary downloaded', 'success');
             }
         });
@@ -469,9 +469,9 @@ function viewSummary(summaryId) {
     const summary = state.summaries.find(s => s.id === summaryId);
     if (!summary) return;
 
-    const content = summary.content || '';
+    const content = summary.summary_text || '';
     const wordCount = content ? content.split(/\s+/).length : 0;
-    const modelName = extractModelName(summary.ai_model);
+    const modelName = extractModelName(summary.ai_model_name);
 
     const modal = document.createElement('div');
     modal.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4';
@@ -481,7 +481,7 @@ function viewSummary(summaryId) {
                 <div>
                     <h3 class="text-2xl font-bold text-gray-900 dark:text-white">Summary #${summary.id}</h3>
                     <div class="flex items-center gap-2 mt-2">
-                        <span class="inline-flex items-center gap-1.5 ${getModelColor(summary.ai_model)} text-xs font-medium px-2 py-1 rounded-full">
+                        <span class="inline-flex items-center gap-1.5 ${getModelColor(summary.ai_model_name)} text-xs font-medium px-2 py-1 rounded-full">
                             <svg class="h-3 w-3" fill="currentColor" viewBox="0 0 24 24">
                                 <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
                             </svg>
